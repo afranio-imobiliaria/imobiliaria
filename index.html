@@ -33365,6 +33365,28 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     </div>
   </div>
 
+  <!-- LOCADORES FIXOS -->
+  <div class="secao">
+    <div class="secao-titulo">Locadores (Proprietários)</div>
+    <div class="grid g3">
+      <div class="card-pgto">
+        <div class="card-titulo">Locador 1</div>
+        <div class="campo"><label>Nome</label><input type="text" value="Afrânio Geraldo de Melo" readonly style="background:#f0f4f8;color:#555"></div>
+        <div class="campo" style="margin-top:6px"><label>CPF</label><input type="text" value="877.073.656-15" readonly style="background:#f0f4f8;color:#555"></div>
+      </div>
+      <div class="card-pgto">
+        <div class="card-titulo">Locadora 2</div>
+        <div class="campo"><label>Nome</label><input type="text" value="Luciene Maura de Souza Melo" readonly style="background:#f0f4f8;color:#555"></div>
+        <div class="campo" style="margin-top:6px"><label>CPF</label><input type="text" value="004.464.886-31" readonly style="background:#f0f4f8;color:#555"></div>
+      </div>
+      <div class="card-pgto">
+        <div class="card-titulo">Locador 3</div>
+        <div class="campo"><label>Nome</label><input type="text" value="Gabriel Afrânio Souza Melo" readonly style="background:#f0f4f8;color:#555"></div>
+        <div class="campo" style="margin-top:6px"><label>CPF</label><input type="text" value="—" readonly style="background:#f0f4f8;color:#555"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- LOCATÁRIO -->
   <div class="secao">
     <div class="secao-titulo" id="af-titulo-lct">Locatário(a) Principal</div>
@@ -33762,6 +33784,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     <button class="btn btn-primary" onclick="gerarContrato('af')">👁 Visualizar Contrato</button>
     <button class="btn btn-outline" onclick="imprimirContrato('af')">🖨 Imprimir</button>
     <button class="btn btn-word" onclick="baixarWord('af')">📝 Baixar Word</button>
+    <button class="btn btn-success" onclick="confirmarArquivar('af')">🗂 Arquivar Contrato</button>
     <button class="btn" style="background:#e53e3e;color:#fff" onclick="limparForm('af')">🗑 Limpar</button>
   </div>
 </div>
@@ -34082,6 +34105,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     <button class="btn btn-primary" onclick="gerarContrato('t3')">👁 Visualizar Contrato</button>
     <button class="btn btn-outline" onclick="imprimirContrato('t3')">🖨 Imprimir</button>
     <button class="btn btn-word" onclick="baixarWord('t3')">📝 Baixar Word</button>
+    <button class="btn btn-success" onclick="confirmarArquivar('t3')">🗂 Arquivar Contrato</button>
     <button class="btn" style="background:#e53e3e;color:#fff" onclick="limparForm('t3')">🗑 Limpar</button>
   </div>
 </div>
@@ -34505,6 +34529,19 @@ function htmlPagamentos(d){
 }
 
 // GERAR CONTRATO
+function confirmarArquivar(pref){
+  var d;
+  try{ d=coletarDados(pref); } catch(e){ alert('Preencha os dados antes de arquivar.'); return; }
+  if(!d||!(d.lct1&&d.lct1.nome)){ alert('Preencha pelo menos o nome do locatário antes de arquivar.'); return; }
+  if(!confirm('Arquivar contrato de '+(d.lct1.nome||'')+'?\n\nEle será salvo no arquivo e no Google Sheets.')) return;
+  try{
+    arquivarContrato(d);
+    alert('✅ Contrato arquivado com sucesso!');
+  } catch(e){
+    alert('Erro ao arquivar: '+e.message);
+  }
+}
+
 function gerarContrato(pref){
   var d,html;
   try{ d=coletarDados(pref); } catch(e){ alert('Erro em coletarDados: '+e.message); return; }
@@ -35794,6 +35831,7 @@ function renderizarArquivo_unused(slug, lista){
         <button class="btn-icone" onclick="visualizarContrato('${c.id}','${slug}')" title="Visualizar">👁 Ver</button>
         <button class="btn-icone btn-word" onclick="gerarWordContrato('${c.id}','${slug}')" title="Gerar Word" style="background:#2b579a;color:#fff;border:none">📝 Word</button>
         <button class="btn-icone" onclick="imprimirContrato2('${c.id}','${slug}')" title="Imprimir">🖨</button>
+        <button class="btn-icone" onclick="reutilizarContrato('${c.id}','${slug}')" title="Reutilizar dados" style="background:#276749;color:#fff;border:none">🔄 Reutilizar</button>
         ${!travado?`
         <button class="btn-icone" onclick="toggleStatusContrato('${c.id}','${slug}')" title="${c.status==='encerrado'?'Reativar':'Encerrar'}">${c.status==='encerrado'?'↩':'✓'}</button>
         <button class="btn-icone" style="color:#e53e3e" onclick="deletarContrato('${c.id}','${slug}')" title="Excluir">🗑</button>`:''}
@@ -35810,6 +35848,61 @@ function visualizarContrato(id, slug){
   const html = montarContrato(c.dados);
   document.getElementById('modal-corpo').innerHTML='<div class="doc">'+html+'</div>';
   document.getElementById('modal-contrato').classList.add('aberto');
+}
+
+function reutilizarContrato(id, slug){
+  const lista = getContratos(slug);
+  const c = lista.find(x=>x.id===id);
+  if(!c||!c.dados) return;
+  const d = c.dados;
+  const pref = slug==='terceiros'?'t3':'af';
+
+  // Ir para a aba correta
+  mostrarAba('aba-locacao-'+(pref==='af'?'af':'3'));
+
+  // Preencher campos após a aba abrir
+  setTimeout(()=>{
+    const set = (id, val)=>{ const el=document.getElementById(id); if(el){ if(el.type==='checkbox') el.checked=!!val; else el.value=val||''; }};
+
+    // Locatário 1
+    if(d.lct1){
+      set(pref+'-lct-nome', d.lct1.nome);
+      set(pref+'-lct-genero', d.lct1.genero);
+      set(pref+'-lct-nac', d.lct1.nac);
+      set(pref+'-lct-est-civil', d.lct1.estCivil);
+      set(pref+'-lct-prof', d.lct1.prof);
+      set(pref+'-lct-cpf', d.lct1.cpf);
+      set(pref+'-lct-rg', d.lct1.rg);
+      set(pref+'-lct-tel', d.lct1.tel);
+      set(pref+'-lct-email', d.lct1.email);
+      set(pref+'-lct-endnot', d.lct1.endnot);
+    }
+
+    // Referências
+    if(d.ref1){ set(pref+'-ref1-nome', d.ref1.nome); set(pref+'-ref1-tel', d.ref1.tel); }
+    if(d.ref2){ set(pref+'-ref2-nome', d.ref2.nome); set(pref+'-ref2-tel', d.ref2.tel); }
+
+    // Imóvel
+    if(d.imovel){
+      set(pref+(pref==='af'?'-tipo-im':''+'-tipo-im'), d.imovel.tipo);
+      set(pref+'-im-numero', d.imovel.numero);
+      set(pref+'-im-posicao', d.imovel.posicao);
+      set(pref+'-im-end', d.imovel.end);
+      set(pref+'-im-edificio', d.imovel.edificio);
+      set(pref+'-im-quartos', d.imovel.quartos);
+      set(pref+'-im-banheiros', d.imovel.banheiros);
+      set(pref+'-im-vaga', d.imovel.vaga);
+      set(pref+'-im-finalidade', d.imovel.finalidade);
+    }
+
+    // Datas e valores — deixa em branco para editar
+    set(pref+'-data-ini', '');
+    set(pref+'-data-fim', '');
+    set(pref+'-aluguel', d.aluguel||'');
+    set(pref+'-caucao', '');
+
+    alert('✅ Dados carregados! Edite as datas e valores conforme necessário.');
+  }, 300);
 }
 
 function imprimirContrato2(id, slug){
