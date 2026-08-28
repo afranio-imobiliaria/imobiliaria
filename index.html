@@ -33438,6 +33438,27 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     </div>
   </div>
 
+  <!-- REFERÊNCIAS PESSOAIS -->
+  <div class="secao">
+    <div class="secao-titulo">Referências Pessoais</div>
+    <div class="grid g2">
+      <div class="card-pgto">
+        <div class="card-titulo">Referência 1</div>
+        <div class="grid g2">
+          <div class="campo"><label>Nome</label><input id="af-ref1-nome" type="text" placeholder="Nome completo"></div>
+          <div class="campo"><label>Telefone</label><input id="af-ref1-tel" type="text" placeholder="(27) 9 0000-0000"></div>
+        </div>
+      </div>
+      <div class="card-pgto">
+        <div class="card-titulo">Referência 2</div>
+        <div class="grid g2">
+          <div class="campo"><label>Nome</label><input id="af-ref2-nome" type="text" placeholder="Nome completo"></div>
+          <div class="campo"><label>Telefone</label><input id="af-ref2-tel" type="text" placeholder="(27) 9 0000-0000"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- IMÓVEL -->
   <div class="secao">
     <div class="secao-titulo">Imóvel</div>
@@ -33544,8 +33565,11 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       <div class="campo"><label>Energia elétrica (EDP)</label>
         <select id="af-edp">
           <option value="nome_locatario">Transferir para nome do locatário</option>
-          <option value="pct50">Locador — 50% locatário</option>
-          <option value="pct100">100% locatário (separado)</option>
+          <option value="pct30">Energia compartilhada — 30% locatário</option>
+          <option value="pct40">Energia compartilhada — 40% locatário</option>
+          <option value="pct50">Energia compartilhada — 50% locatário</option>
+          <option value="pct60">Energia compartilhada — 60% locatário</option>
+          <option value="pct70">Energia compartilhada — 70% locatário</option>
         </select>
       </div>
       <div class="campo"><label>N.º instalação EDP (opcional)</label><input id="af-edp-inst" type="text" placeholder="N.º instalação"></div>
@@ -33808,6 +33832,27 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     </div>
   </div>
 
+  <!-- REFERÊNCIAS PESSOAIS T3 -->
+  <div class="secao">
+    <div class="secao-titulo">Referências Pessoais</div>
+    <div class="grid g2">
+      <div class="card-pgto">
+        <div class="card-titulo">Referência 1</div>
+        <div class="grid g2">
+          <div class="campo"><label>Nome</label><input id="t3-ref1-nome" type="text" placeholder="Nome completo"></div>
+          <div class="campo"><label>Telefone</label><input id="t3-ref1-tel" type="text" placeholder="(27) 9 0000-0000"></div>
+        </div>
+      </div>
+      <div class="card-pgto">
+        <div class="card-titulo">Referência 2</div>
+        <div class="grid g2">
+          <div class="campo"><label>Nome</label><input id="t3-ref2-nome" type="text" placeholder="Nome completo"></div>
+          <div class="campo"><label>Telefone</label><input id="t3-ref2-tel" type="text" placeholder="(27) 9 0000-0000"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- As demais seções de terceiros são iguais à aba 1 — reutilizamos com prefixo t3 -->
   <!-- IMÓVEL -->
   <div class="secao">
@@ -33887,9 +33932,12 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       <div class="campo"><label>Total cotas edifício</label><input id="t3-cotas-total" type="text"></div>
       <div class="campo"><label>Energia</label>
         <select id="t3-edp">
-          <option value="nome_locatario">Transferir para locatário</option>
-          <option value="pct50">50% locatário</option>
-          <option value="pct100">100% locatário</option>
+          <option value="nome_locatario">Transferir para nome do locatário</option>
+          <option value="pct30">Energia compartilhada — 30% locatário</option>
+          <option value="pct40">Energia compartilhada — 40% locatário</option>
+          <option value="pct50">Energia compartilhada — 50% locatário</option>
+          <option value="pct60">Energia compartilhada — 60% locatário</option>
+          <option value="pct70">Energia compartilhada — 70% locatário</option>
         </select>
       </div>
       <div class="campo"><label>N.º instalação EDP</label><input id="t3-edp-inst" type="text"></div>
@@ -34025,6 +34073,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       </div>
     </div>
   </div>
+
   <div class="secao">
     <div class="secao-titulo">Data de Assinatura</div>
     <div class="campo" style="max-width:200px"><label>Data</label><input id="t3-data-assin" type="date"></div>
@@ -34509,6 +34558,7 @@ function coletarDados(pref){
       extras:coletarPgtosExtras('af'),
       laudo:{geral:val('af-laudo-geral'),detalhe:val('af-laudo-detalhe')},
       test1:{nome:val('af-test1-nome'),cpf:val('af-test1-cpf')},test2:{nome:val('af-test2-nome'),cpf:val('af-test2-cpf')},
+      ref1:{nome:val('af-ref1-nome'),tel:val('af-ref1-tel')},ref2:{nome:val('af-ref2-nome'),tel:val('af-ref2-tel')},
       dataAssin:val('af-data-assin'),
       locadores:[
         {nome:'Afrânio Geraldo de Melo',qual:'brasileiro, advogado',cpf:'877.073.656-15',rg:'M-7.810.878'},
@@ -34541,6 +34591,7 @@ function coletarDados(pref){
       extras:coletarPgtosExtras('t3'),
       laudo:{geral:'',detalhe:''},
       test1:{nome:val('t3-test1-nome'),cpf:val('t3-test1-cpf')},test2:{nome:val('t3-test2-nome'),cpf:val('t3-test2-cpf')},
+      ref1:{nome:val('t3-ref1-nome'),tel:val('t3-ref1-tel')},ref2:{nome:val('t3-ref2-nome'),tel:val('t3-ref2-tel')},
       dataAssin:val('t3-data-assin'),
       locadores
     };
@@ -34575,6 +34626,8 @@ function montarContrato(d){
   const proc=d.proc||{nome:'',cpf:'',rg:''};
   const test1=d.test1||{nome:'',cpf:''};
   const test2=d.test2||{nome:'',cpf:''};
+  const ref1=d.ref1||{nome:'',tel:''};
+  const ref2=d.ref2||{nome:'',tel:''};
   const ld=d.laudo||{};
 
   // Variáveis do contrato
@@ -34814,6 +34867,15 @@ function montarContrato(d){
   h+='<div class="ass">_________________________<br><strong>'+(test1.nome||'___________________________')+'</strong>'+(test1.cpf?'<br>CPF n.º '+test1.cpf:'')+'<br><small>Testemunha 1</small></div>';
   h+='<div class="ass">_________________________<br><strong>'+(test2.nome||'___________________________')+'</strong>'+(test2.cpf?'<br>CPF n.º '+test2.cpf:'')+'<br><small>Testemunha 2</small></div>';
   h+='</div>';
+
+  if(ref1.nome||ref2.nome){
+    h+='<hr>';
+    h+='<p><strong>REFERÊNCIAS PESSOAIS DO(A) LOCATÁRIO(A)</strong></p>';
+    h+='<div class="assinaturas" style="margin-top:8px">';
+    if(ref1.nome)h+='<div class="ass"><strong>'+ref1.nome+'</strong>'+(ref1.tel?'<br>Tel.: '+ref1.tel:'')+'<br><small>Referência 1</small></div>';
+    if(ref2.nome)h+='<div class="ass"><strong>'+ref2.nome+'</strong>'+(ref2.tel?'<br>Tel.: '+ref2.tel:'')+'<br><small>Referência 2</small></div>';
+    h+='</div>';
+  }
 
   h+='<p style="text-align:center;font-size:10px;margin-top:20px"><strong>Dr. Afrânio Geraldo de Melo</strong> — Advogado OAB/ES n.º 23.365 | Corretor CRECI n.º 8857/ES<br>Afrânio Imóveis — Rua São Luís, n.º 25, Bairro Jóquei de Itaparica, Vila Velha/ES — CEP 29.103-890<br>E-mail: afraniodemelo@yahoo.com.br | Fone: (27) 9 9834-1799</p>';
 
