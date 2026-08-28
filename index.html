@@ -35587,6 +35587,17 @@ function salvarFormulario(pref){
     if(el.id) dados[el.id] = el.type==='checkbox'?el.checked:el.value;
   });
   localStorage.setItem('gerador_form_'+pref, JSON.stringify(dados));
+  let aviso = document.getElementById('aviso-salvo-'+pref);
+  if(!aviso){
+    aviso = document.createElement('div');
+    aviso.id = 'aviso-salvo-'+pref;
+    aviso.style.cssText='position:fixed;bottom:16px;right:16px;background:#276749;color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s';
+    aviso.textContent='✓ Dados salvos automaticamente';
+    document.body.appendChild(aviso);
+  }
+  aviso.style.opacity='1';
+  clearTimeout(aviso._timer);
+  aviso._timer = setTimeout(()=>aviso.style.opacity='0', 2000);
 }
 
 function restaurarFormulario(pref){
@@ -35653,6 +35664,31 @@ function salvarContrato(slug, contrato){
   DB.set('contratos_'+slug, lista);
 }
 
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbymjRYEslTXDueYrlnLwnaWMyMwMRZTUVSIXsoxra99hOTKB1PLQDhXa98PPt2qWnDH/exec';
+
+function enviarParaSheets(contrato){
+  const payload = {
+    aba: contrato.edificio || 'Terceiros',
+    id: contrato.id,
+    dataSalvo: contrato.dataSalvo,
+    edificio: contrato.edificio,
+    apartamento: contrato.apartamento,
+    locatario: contrato.locatario,
+    dataIni: contrato.dataIni,
+    dataFim: contrato.dataFim,
+    aluguel: (contrato.dados&&contrato.dados.aluguel)||'',
+    status: contrato.status,
+    dados: contrato.dados
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }).then(r=>r.json()).then(res=>{
+    if(res.ok) console.log('Salvo no Google Sheets!');
+    else console.warn('Erro ao salvar no Sheets:', res.erro);
+  }).catch(err=>console.warn('Falha na conexão com Sheets:', err));
+}
+
 function arquivarContrato(d){
   const edificio = d.imovel&&d.imovel.edificio ? d.imovel.edificio : 'Outro';
   const slug = slugEdificio(edificio);
@@ -35667,10 +35703,11 @@ function arquivarContrato(d){
     dataFim: d.dataFim||'',
     status: 'ativo',
     travado: false,
-    dados: d  // salva todos os dados do formulário
+    dados: d
   };
   salvarContrato(slug, contrato);
   carregarArquivo(slug);
+  enviarParaSheets(contrato);
   return {slug, contrato};
 }
 
