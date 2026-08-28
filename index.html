@@ -34213,6 +34213,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
   <div class="painel-header">
     <div><h2>🏢 Ed. Veraneio — Contratos</h2><p>Rua São Luís, n.º 25 — Bairro Jóquei de Itaparica, Vila Velha/ES</p></div>
     <div style="display:flex;gap:8px">
+      <button id="btn-sync-veraneio" class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="sincronizarSheets('veraneio')">☁️ Sincronizar</button>
       <button class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="exportarDados()">📤 Exportar tudo</button>
       <label class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px;cursor:pointer">📥 Importar<input type="file" accept=".json" style="display:none" onchange="importarDados(this)"></label>
     </div>
@@ -34224,6 +34225,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
   <div class="painel-header">
     <div><h2>🏢 Ed. Solares — Contratos</h2><p>Rua São Luís, n.º 25 — Bairro Jóquei de Itaparica, Vila Velha/ES</p></div>
     <div style="display:flex;gap:8px">
+      <button id="btn-sync-solares" class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="sincronizarSheets('solares')">☁️ Sincronizar</button>
       <button class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="exportarDados()">📤 Exportar tudo</button>
       <label class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px;cursor:pointer">📥 Importar<input type="file" accept=".json" style="display:none" onchange="importarDados(this)"></label>
     </div>
@@ -34235,6 +34237,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
   <div class="painel-header">
     <div><h2>🏢 Ed. São Francisco de Assis — Contratos</h2><p>Rua São Luís, n.º 25 — Bairro Jóquei de Itaparica, Vila Velha/ES</p></div>
     <div style="display:flex;gap:8px">
+      <button id="btn-sync-sfassis" class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="sincronizarSheets('sfassis')">☁️ Sincronizar</button>
       <button class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="exportarDados()">📤 Exportar tudo</button>
       <label class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px;cursor:pointer">📥 Importar<input type="file" accept=".json" style="display:none" onchange="importarDados(this)"></label>
     </div>
@@ -34246,6 +34249,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
   <div class="painel-header">
     <div><h2>🏢 Ed. Girassol — Contratos</h2><p>Rua São Luís, n.º 25 — Bairro Jóquei de Itaparica, Vila Velha/ES</p></div>
     <div style="display:flex;gap:8px">
+      <button id="btn-sync-girassol" class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="sincronizarSheets('girassol')">☁️ Sincronizar</button>
       <button class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="exportarDados()">📤 Exportar tudo</button>
       <label class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px;cursor:pointer">📥 Importar<input type="file" accept=".json" style="display:none" onchange="importarDados(this)"></label>
     </div>
@@ -34257,6 +34261,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
   <div class="painel-header">
     <div><h2>📋 Terceiros — Contratos</h2><p>Contratos com locadores variáveis</p></div>
     <div style="display:flex;gap:8px">
+      <button id="btn-sync-terceiros" class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="sincronizarSheets('terceiros')">☁️ Sincronizar</button>
       <button class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="exportarDados()">📤 Exportar tudo</button>
       <label class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px;cursor:pointer">📥 Importar<input type="file" accept=".json" style="display:none" onchange="importarDados(this)"></label>
     </div>
@@ -35760,11 +35765,14 @@ function carregarArquivo(slug){
   const el = document.getElementById('lista-arq-'+slug);
   if(!el) return;
 
-  // Primeiro mostra o que tem no localStorage
   const local = getContratos(slug);
   renderizarArquivo(slug, local);
+}
 
-  // Depois tenta buscar do Google Sheets em segundo plano
+function sincronizarSheets(slug){
+  const el = document.getElementById('lista-arq-'+slug);
+  if(!el) return;
+
   const nomeAba = {
     'veraneio': 'Ed. Veraneio',
     'solares': 'Ed. Solares',
@@ -35773,11 +35781,19 @@ function carregarArquivo(slug){
     'terceiros': 'Outro'
   }[slug] || slug;
 
+  const btn = document.getElementById('btn-sync-'+slug);
+  if(btn){ btn.textContent='🔄 Sincronizando...'; btn.disabled=true; }
+
   fetch(SHEETS_URL + '?aba=' + encodeURIComponent(nomeAba))
     .then(r=>r.json())
     .then(sheetsData=>{
-      if(!Array.isArray(sheetsData)) return;
-      let atualizado = false;
+      if(!Array.isArray(sheetsData)){
+        alert('Erro ao sincronizar. Tente novamente.');
+        if(btn){ btn.textContent='☁️ Sincronizar'; btn.disabled=false; }
+        return;
+      }
+      const local = getContratos(slug);
+      let novos = 0;
       sheetsData.forEach(c=>{
         if(!c||!c.id) return;
         if(!local.find(l=>l.id===c.id)){
@@ -35794,15 +35810,19 @@ function carregarArquivo(slug){
             travado: false,
             dados: c
           });
-          atualizado = true;
+          novos++;
         }
       });
-      if(atualizado){
-        DB.set('contratos_'+slug, local);
-        renderizarArquivo(slug, local);
-      }
+      DB.set('contratos_'+slug, local);
+      renderizarArquivo(slug, local);
+      if(btn){ btn.textContent='☁️ Sincronizar'; btn.disabled=false; }
+      if(novos>0) alert('✅ '+novos+' contrato(s) novo(s) importado(s) do Google Sheets!');
+      else alert('✅ Tudo atualizado! Nenhum contrato novo encontrado.');
     })
-    .catch(()=>{}); // falha silenciosa
+    .catch(()=>{
+      alert('❌ Falha na conexão. Verifique sua internet e tente novamente.');
+      if(btn){ btn.textContent='☁️ Sincronizar'; btn.disabled=false; }
+    });
 }
 
 function renderizarArquivo(slug, lista){
