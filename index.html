@@ -35759,10 +35759,12 @@ function arquivarContrato(d){
 function carregarArquivo(slug){
   const el = document.getElementById('lista-arq-'+slug);
   if(!el) return;
-  
-  el.innerHTML='<p style="color:#888;text-align:center;padding:24px">🔄 Carregando contratos...</p>';
 
-  // Mapear slug para nome do edifício na planilha
+  // Primeiro mostra o que tem no localStorage
+  const local = getContratos(slug);
+  renderizarArquivo(slug, local);
+
+  // Depois tenta buscar do Google Sheets em segundo plano
   const nomeAba = {
     'veraneio': 'Ed. Veraneio',
     'solares': 'Ed. Solares',
@@ -35771,19 +35773,15 @@ function carregarArquivo(slug){
     'terceiros': 'Outro'
   }[slug] || slug;
 
-  // Buscar do Google Sheets
   fetch(SHEETS_URL + '?aba=' + encodeURIComponent(nomeAba))
     .then(r=>r.json())
     .then(sheetsData=>{
-      // Mesclar com localStorage
-      const local = getContratos(slug);
-      const sheetsIds = sheetsData.map(c=>c&&c.id).filter(Boolean);
-      
-      // Adicionar do Sheets que não estão no local
+      if(!Array.isArray(sheetsData)) return;
+      let atualizado = false;
       sheetsData.forEach(c=>{
         if(!c||!c.id) return;
         if(!local.find(l=>l.id===c.id)){
-          const contrato = {
+          local.push({
             id: c.id,
             dataSalvo: c.dataSalvo||new Date().toISOString(),
             edificio: c.edificio||nomeAba,
@@ -35795,20 +35793,16 @@ function carregarArquivo(slug){
             status: c.status||'ativo',
             travado: false,
             dados: c
-          };
-          local.push(contrato);
+          });
+          atualizado = true;
         }
       });
-      
-      // Salvar lista mesclada no localStorage
-      DB.set('contratos_'+slug, local);
-      renderizarArquivo(slug, local);
+      if(atualizado){
+        DB.set('contratos_'+slug, local);
+        renderizarArquivo(slug, local);
+      }
     })
-    .catch(err=>{
-      // Se falhar conexão, usa só o localStorage
-      const local = getContratos(slug);
-      renderizarArquivo(slug, local);
-    });
+    .catch(()=>{}); // falha silenciosa
 }
 
 function renderizarArquivo_unused(slug, lista){
