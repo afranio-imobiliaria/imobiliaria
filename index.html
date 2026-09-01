@@ -33485,15 +33485,23 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
         </select>
       </div>
       <div class="campo"><label>Número / Identificação</label><input id="af-im-numero" type="text" placeholder="Ex: Ap. 101, Casa 02"></div>
-      <div class="campo"><label>Posição</label>
-        <select id="af-im-posicao">
+      <div class="campo"><label>Posição / Andar</label>
+        <select id="af-im-posicao" onchange="toggleAndarCustom('af', this.value)">
           <option value="andar térreo">Térreo</option>
           <option value="1.º andar">1.º andar</option>
           <option value="2.º andar">2.º andar</option>
           <option value="3.º andar">3.º andar</option>
           <option value="4.º andar">4.º andar</option>
+          <option value="5.º andar">5.º andar</option>
+          <option value="6.º andar">6.º andar</option>
+          <option value="7.º andar">7.º andar</option>
+          <option value="8.º andar">8.º andar</option>
+          <option value="9.º andar">9.º andar</option>
+          <option value="10.º andar">10.º andar</option>
           <option value="cobertura">Cobertura</option>
+          <option value="outro">Outro (digitar)</option>
         </select>
+        <input id="af-im-posicao-custom" type="text" placeholder="Digite o andar" style="display:none;margin-top:6px">
       </div>
     </div>
     <div class="grid g2" style="margin-top:10px">
@@ -33953,14 +33961,23 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
         </select>
       </div>
       <div class="campo"><label>Número / Identificação</label><input id="t3-im-numero" type="text" placeholder="Ap. 101"></div>
-      <div class="campo"><label>Posição</label>
-        <select id="t3-im-posicao">
+      <div class="campo"><label>Posição / Andar</label>
+        <select id="t3-im-posicao" onchange="toggleAndarCustom('t3', this.value)">
           <option value="andar térreo">Térreo</option>
           <option value="1.º andar">1.º andar</option>
           <option value="2.º andar">2.º andar</option>
           <option value="3.º andar">3.º andar</option>
+          <option value="4.º andar">4.º andar</option>
+          <option value="5.º andar">5.º andar</option>
+          <option value="6.º andar">6.º andar</option>
+          <option value="7.º andar">7.º andar</option>
+          <option value="8.º andar">8.º andar</option>
+          <option value="9.º andar">9.º andar</option>
+          <option value="10.º andar">10.º andar</option>
           <option value="cobertura">Cobertura</option>
+          <option value="outro">Outro (digitar)</option>
         </select>
+        <input id="t3-im-posicao-custom" type="text" placeholder="Digite o andar" style="display:none;margin-top:6px">
       </div>
     </div>
     <div class="campo" style="margin-top:10px"><label>Endereço completo</label><input id="t3-im-end" type="text" placeholder="Rua, número, Bairro, CEP, Cidade/UF"></div>
@@ -34084,6 +34101,15 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       <div class="campo"><label>Procurador (nome)</label><input id="t3-proc-nome" type="text"></div>
       <div class="campo"><label>CPF procurador</label><input id="t3-proc-cpf" type="text"></div>
       <div class="campo"><label>RG procurador</label><input id="t3-proc-rg" type="text"></div>
+    </div>
+  </div>
+
+  <!-- IMOBILIÁRIA T3 -->
+  <div class="secao">
+    <div class="secao-titulo">Honorários da Imobiliária</div>
+    <div class="grid g2">
+      <div class="campo"><label>Taxa de Aditamento (R$)</label><input id="t3-imob-adit" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="campo"><label>Taxa de Encerramento (R$)</label><input id="t3-imob-enc" type="number" step="0.01" placeholder="0,00"></div>
     </div>
   </div>
 
@@ -34503,6 +34529,21 @@ function mostrarAba(id, btn){
 }
 
 // TOGGLES
+function toggleAndarCustom(pref, val){
+  const custom = document.getElementById(pref+'-im-posicao-custom');
+  if(custom) custom.style.display = val==='outro' ? '' : 'none';
+}
+
+function getPosicao(pref){
+  const sel = document.getElementById(pref+'-im-posicao');
+  if(!sel) return '';
+  if(sel.value === 'outro'){
+    const custom = document.getElementById(pref+'-im-posicao-custom');
+    return custom ? custom.value : '';
+  }
+  return sel.value;
+}
+
 function toggleLct2(pref){
   const show=g(pref+'-tem-lct2').checked;
   g(pref+'-lct2-bloco').style.display=show?'':'none';
@@ -34645,7 +34686,7 @@ function coletarDados(pref){
       genero:val('af-lct-genero'),
       lct1:{nome:val('af-lct-nome'),nac:val('af-lct-nac'),ec:val('af-lct-ec'),prof:val('af-lct-prof'),cpf:val('af-lct-cpf'),rg:val('af-lct-rg'),tel:val('af-lct-tel'),email:val('af-lct-email')},
       lct2:g('af-tem-lct2').checked?{nome:val('af-lct2-nome'),nac:val('af-lct2-nac'),ec:val('af-lct2-ec'),prof:val('af-lct2-prof'),cpf:val('af-lct2-cpf'),rg:val('af-lct2-rg'),tel:val('af-lct2-tel')}:null,
-      imovel:{tipo:val('af-tipo-im'),numero:val('af-im-numero'),posicao:val('af-im-posicao'),end:val('af-im-end'),edificio:val('af-im-edificio'),quartos:parseInt(val('af-im-quartos'))||0,banheiros:parseInt(val('af-im-banheiros'))||1,vaga:val('af-im-vaga'),finalidade:val('af-im-finalidade'),varanda:val('af-im-varanda')==='sim',obs:val('af-im-obs')},
+      imovel:{tipo:val('af-tipo-im'),numero:val('af-im-numero'),posicao:getPosicao('af'),end:val('af-im-end'),edificio:val('af-im-edificio'),quartos:parseInt(val('af-im-quartos'))||0,banheiros:parseInt(val('af-im-banheiros'))||1,vaga:val('af-im-vaga'),finalidade:val('af-im-finalidade'),varanda:val('af-im-varanda')==='sim',obs:val('af-im-obs')},
       cond:val('af-condominio')==='sim',condVal:val('af-cond-val'),cesan:val('af-cesan'),cotas:val('af-cotas'),cotasTotal:val('af-cotas-total'),edp:val('af-edp'),edpInst:val('af-edp-inst'),gas:val('af-gas'),internet:val('af-internet'),seguro:val('af-seguro'),animais:val('af-animais')==='sim',chaves:val('af-chaves'),
       dataIni:val('af-data-ini'),dataFim:val('af-data-fim'),aluguel:val('af-aluguel'),caucao:val('af-caucao'),pixFavor:val('af-pix-favor'),pixChave:val('af-pix-chave'),
       proc:{nome:val('af-proc-nome'),cpf:val('af-proc-cpf'),rg:val('af-proc-rg')},
@@ -34680,7 +34721,7 @@ function coletarDados(pref){
       pref:'t3',tipo:'terceiros',genero:val('t3-lct-genero'),
       lct1:{nome:val('t3-lct-nome'),nac:val('t3-lct-nac'),ec:val('t3-lct-ec'),prof:val('t3-lct-prof'),cpf:val('t3-lct-cpf'),rg:val('t3-lct-rg'),tel:val('t3-lct-tel'),email:val('t3-lct-email')},
       lct2:g('t3-tem-lct2')&&g('t3-tem-lct2').checked?{nome:val('t3-lct2-nome'),nac:val('t3-lct2-nac'),ec:val('t3-lct2-ec'),prof:val('t3-lct2-prof'),cpf:val('t3-lct2-cpf'),rg:val('t3-lct2-rg'),tel:val('t3-lct2-tel')}:null,
-      imovel:{tipo:val('t3-tipo-im'),numero:val('t3-im-numero'),posicao:val('t3-im-posicao'),end:val('t3-im-end'),edificio:'',quartos:parseInt(val('t3-im-quartos'))||0,banheiros:parseInt(val('t3-im-banheiros'))||1,vaga:val('t3-im-vaga'),finalidade:val('t3-im-finalidade'),varanda:false,obs:''},
+      imovel:{tipo:val('t3-tipo-im'),numero:val('t3-im-numero'),posicao:getPosicao('t3'),end:val('t3-im-end'),edificio:'',quartos:parseInt(val('t3-im-quartos'))||0,banheiros:parseInt(val('t3-im-banheiros'))||1,vaga:val('t3-im-vaga'),finalidade:val('t3-im-finalidade'),varanda:false,obs:''},
       cond:val('t3-condominio')==='sim',condVal:val('t3-cond-val'),cesan:val('t3-cesan'),cotas:val('t3-cotas'),cotasTotal:val('t3-cotas-total'),edp:val('t3-edp'),edpInst:val('t3-edp-inst'),gas:val('t3-gas'),internet:val('t3-internet'),seguro:val('t3-seguro'),animais:val('t3-animais')==='sim',chaves:val('t3-chaves'),
       dataIni:val('t3-data-ini'),dataFim:val('t3-data-fim'),aluguel:val('t3-aluguel'),caucao:val('t3-caucao'),pixFavor:val('t3-pix-favor'),pixChave:val('t3-pix-chave'),
       proc:{nome:val('t3-proc-nome'),cpf:val('t3-proc-cpf'),rg:val('t3-proc-rg')},
@@ -35059,11 +35100,12 @@ function imprimirContrato(pref, dadosOpt){
   const html=montarContrato(d);
   const w=window.open('','_blank');
   w.document.write(`<html><head><title>Contrato</title>
-  <style>body{font-family:'Times New Roman',serif;font-size:12px;line-height:1.7;padding:40px;color:#000}
+  <style>body{font-family:Arial,sans-serif;font-size:12px;line-height:1.7;padding:40px;color:#000}
   h1{font-size:14px;text-align:center;text-transform:uppercase;letter-spacing:1.5px}
   p{margin-bottom:8px;text-align:justify}strong{font-weight:700}hr{border:none;border-top:1px solid #999;margin:20px 0}
   .assinaturas{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:16px}
   .ass{text-align:center;font-size:11px;line-height:1.5}
+  img{max-width:200px;max-height:100px}
   @media print{body{padding:20px}}</style></head>
   <body>${html}</body></html>`);
   w.document.close();
