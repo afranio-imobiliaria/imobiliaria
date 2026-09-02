@@ -95,8 +95,9 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#222;min-h
 .doc p{margin-bottom:8px;text-align:justify}
 .doc strong{font-weight:700}
 .doc hr{border:none;border-top:1px solid #999;margin:20px 0}
-.assinaturas{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:16px}
-.ass{text-align:center;font-size:11px;line-height:1.5}
+.assinaturas{display:flex;flex-wrap:wrap;justify-content:center;gap:40px;margin-top:16px}
+.ass{text-align:center;font-size:11px;line-height:1.8;min-width:180px}
+.ass div{border-top:1px solid #000;width:200px;margin:0 auto 6px}
 
 /* STATUS EM BREVE */
 .em-breve-painel{text-align:center;padding:60px 24px;color:#888}
@@ -35019,7 +35020,7 @@ function imprimirContrato(pref, dadosOpt){
   w.document.write(`<html><head><title>Contrato</title>
   <style>
   body{font-family:Arial,sans-serif;font-size:12px;line-height:1.7;padding:40px;color:#000}
-  h1{font-size:14px;text-align:center;text-transform:uppercase;letter-spacing:1.5px}
+  h1{font-size:14px;text-align:center;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
   p{margin-bottom:8px;text-align:justify}
   strong{font-weight:700}
   hr{border:none;border-top:1px solid #999;margin:20px 0}
@@ -35027,11 +35028,11 @@ function imprimirContrato(pref, dadosOpt){
   .assinaturas{display:flex;flex-wrap:wrap;justify-content:center;gap:40px;margin-top:16px}
   .ass{text-align:center;font-size:11px;line-height:1.8;min-width:180px}
   .ass div{border-top:1px solid #000;width:200px;margin:0 auto 6px}
-  @media print{body{padding:20px}}
+  @media print{body{padding:20px};-webkit-print-color-adjust:exact;print-color-adjust:exact}
   </style></head>
   <body>${html}</body></html>`);
   w.document.close();
-  setTimeout(()=>w.print(),500);
+  setTimeout(()=>w.print(),800);
 }
 
 // BAIXAR WORD (via API Anthropic)
