@@ -35052,7 +35052,7 @@ async function gerarDocx(d){
   const fmtDt=s=>{if(!s)return'_______________';const[y,m,dd]=s.split('-');return dd+' de '+MESES[parseInt(m)-1]+' de '+y;};
   let diaStr='___',mesStr='___',anoStr='___';
   if(d.dataAssin){const[y,m,dd]=d.dataAssin.split('-');diaStr=dd;mesStr=MESES[parseInt(m)-1];anoStr=y;}
-  const lct1=d.lct1||{};const im=d.imovel||{};const locadores=d.locadores||[];
+  const lct1=d.lct1||{};const lct2=d.lct2||null;const im=d.imovel||{};const locadores=d.locadores||[];
   const proc=d.proc||{nome:'',cpf:'',rg:''};const test1=d.test1||{nome:'',cpf:''};const test2=d.test2||{nome:'',cpf:''};
   const txtLct1=[lct1.nome,lct1.nac,lct1.prof,lct1.ec,lct1.cpf?'CPF n.º '+lct1.cpf:'',lct1.rg?'RG n.º '+lct1.rg:'',lct1.email?'e-mail '+lct1.email:'',lct1.tel?'telefone '+lct1.tel:''].filter(Boolean).join(', ');
   var caract='sala';
