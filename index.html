@@ -35066,7 +35066,9 @@ async function gerarDocx(d){
   const esp=()=>new Paragraph({children:[new TextRun({text:'',size:24})],spacing:{after:80}});
   const ass=(nome,cpf,cargo)=>new Paragraph({children:[new TextRun({text:'_________________________\n'+nome+(cpf?'\nCPF n.º '+cpf:'')+'\n'+cargo,size:22,font:'Times New Roman'})],alignment:AlignmentType.CENTER,spacing:{after:300}});
   const ps=[];
-  ps.push(new Paragraph({children:[new TextRun({text:'CONTRATO DE LOCAÇÃO DE IMÓVEL',bold:true,size:28,font:'Times New Roman'})],alignment:AlignmentType.CENTER,spacing:{after:80}}));
+  ps.push(new Paragraph({children:[new TextRun({text:'IMOBILIÁRIA AFRÂNIO CONSULTORIA IMOBILIÁRIA',bold:true,size:28,font:'Arial',color:'1a3a5c'})],alignment:AlignmentType.CENTER,spacing:{after:40}}));
+  ps.push(new Paragraph({children:[new TextRun({text:'CRECI 8857F',size:20,font:'Arial',color:'555555'})],alignment:AlignmentType.CENTER,spacing:{after:200}}));
+  ps.push(new Paragraph({children:[new TextRun({text:'CONTRATO DE LOCAÇÃO DE IMÓVEL',bold:true,size:28,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:80}}));
   ps.push(new Paragraph({children:[new TextRun({text:'Instrumento Particular de Locação — Lei n.º 8.245/1991',size:20,font:'Times New Roman',color:'555555'})],alignment:AlignmentType.CENTER,spacing:{after:200}}));
   ps.push(par('PELO PRESENTE INSTRUMENTO PARTICULAR DE LOCAÇÃO DE IMÓVEL, de acordo com a legislação vigente — Lei n.º 8.245/1991, Lei n.º 10.406/2002 (Código Civil), Lei n.º 13.709/2018 (LGPD) e o Código de Processo Civil —, os Locadores e '+art+' '+loc_t+' celebram este contrato sob as cláusulas e condições seguintes:'));
   ps.push(tit('CLÁUSULA PRIMEIRA — DAS PARTES CONTRATANTES'));
@@ -35114,19 +35116,31 @@ async function gerarDocx(d){
   ps.push(tit('CLÁUSULA '+cn('OITAVA')+' — DO FORO E DOS MEIOS DE SOLUÇÃO DE CONFLITO'));
   ps.push(par('Estando as partes contratantes de acordo com todos os termos deste contrato de locação, elegem o foro de Vila Velha, Estado do Espírito Santo, para dirimir eventuais controvérsias. Em caso de litígios, comprometem-se a buscar, primeiramente, conciliação e mediação. As comunicações poderão ser feitas por e-mail, mensagem criptografada ou notificação escrita. Não obtido o acordo em até 10 (dez) dias, poderá a parte interessada promover a ação judicial cabível. Aplicam-se à relação contratual as Leis n.º 9.099/1995, n.º 9.307/1996, n.º 10.406/2002, n.º 13.140/2015 e o Código de Processo Civil.'));
   ps.push(esp());
-  ps.push(new Paragraph({children:[new TextRun({text:'CIÊNCIA, ACEITE E DECLARAÇÃO DAS PARTES',bold:true,size:24,font:'Times New Roman'})],alignment:AlignmentType.CENTER,spacing:{after:100}}));
+  ps.push(new Paragraph({children:[new TextRun({text:'CIÊNCIA, ACEITE E DECLARAÇÃO DAS PARTES',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:100}}));
   ps.push(par('As partes declaram: I — Ter procedido à leitura integral deste instrumento; II — Que todos os dados pessoais informados estão em conformidade com os documentos originais; III — Este instrumento é firmado em 02 (duas) vias de igual teor e forma; IV — Este contrato constitui título executivo extrajudicial nos termos do art. 784, inciso III, do Código de Processo Civil.'));
   ps.push(esp());
-  ps.push(new Paragraph({children:[new TextRun({text:'Vila Velha/ES, '+diaStr+' de '+mesStr+' de '+anoStr+'.',bold:true,size:24,font:'Times New Roman'})],alignment:AlignmentType.CENTER,spacing:{after:400}}));
+  ps.push(new Paragraph({children:[new TextRun({text:'Vila Velha/ES, '+diaStr+' de '+mesStr+' de '+anoStr+'.',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:400}}));
+
+  // LOCADORES
+  ps.push(new Paragraph({children:[new TextRun({text:'LOCADORES',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:300}}));
   locadores.forEach(l=>{ps.push(ass(l.nome,l.cpf,l.nome.includes('Luciene')?'Locadora':'Locador'));});
-  ps.push(ass(lct1.nome||'___________________________',lct1.cpf,loc_t));
+
+  // LOCATÁRIO
   ps.push(esp());
+  ps.push(new Paragraph({children:[new TextRun({text:loc_t.toUpperCase(),bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:300}}));
+  ps.push(ass(lct1.nome||'___________________________',lct1.cpf,loc_t));
+
+  // TESTEMUNHAS
+  ps.push(esp());
+  ps.push(new Paragraph({children:[new TextRun({text:'TESTEMUNHAS',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:300}}));
   if(test1.nome)ps.push(ass(test1.nome,test1.cpf,'Testemunha 1'));
   if(test2.nome)ps.push(ass(test2.nome,test2.cpf,'Testemunha 2'));
+
   ps.push(esp());
-  ps.push(new Paragraph({children:[new TextRun({text:'Dr. Afrânio Geraldo de Melo — Advogado OAB/ES n.º 23.365 | Corretor CRECI n.º 8857/ES',size:18,font:'Times New Roman',color:'555555'})],alignment:AlignmentType.CENTER}));
-  ps.push(new Paragraph({children:[new TextRun({text:'Afrânio Imóveis — Rua São Luís, n.º 25, Bairro Jóquei de Itaparica, Vila Velha/ES — CEP 29.103-890',size:18,font:'Times New Roman',color:'555555'})],alignment:AlignmentType.CENTER}));
-  ps.push(new Paragraph({children:[new TextRun({text:'E-mail: afraniodemelo@yahoo.com.br | Fone: (27) 9 9834-1799',size:18,font:'Times New Roman',color:'555555'})],alignment:AlignmentType.CENTER}));
+  // RODAPÉ
+  ps.push(new Paragraph({children:[new TextRun({text:'IMOBILIÁRIA AFRÂNIO CONSULTORIA IMOBILIÁRIA — CRECI 8857F',bold:true,size:18,font:'Arial',color:'555555'})],alignment:AlignmentType.CENTER}));
+  ps.push(new Paragraph({children:[new TextRun({text:'Rua São Luís, número 25, Lojas 1 e 2, Bairro Jóquei de Itaparica, Vila Velha/ES — CEP 29.103-890',size:18,font:'Arial',color:'555555'})],alignment:AlignmentType.CENTER}));
+  ps.push(new Paragraph({children:[new TextRun({text:'E-mail: imobiliariaafraniodemelo@gmail.com — Tel.: (27) 3075-6863',size:18,font:'Arial',color:'555555'})],alignment:AlignmentType.CENTER}));
   const doc=new Document({sections:[{properties:{page:{margin:{top:1440,right:1134,bottom:1440,left:1134}}},children:ps}]});
   const blob=await Packer.toBlob(doc);
   const url=URL.createObjectURL(blob);
