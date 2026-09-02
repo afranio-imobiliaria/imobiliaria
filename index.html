@@ -35073,7 +35073,7 @@ async function gerarDocx(d){
   ps.push(par('PELO PRESENTE INSTRUMENTO PARTICULAR DE LOCAÇÃO DE IMÓVEL, de acordo com a legislação vigente — Lei n.º 8.245/1991, Lei n.º 10.406/2002 (Código Civil), Lei n.º 13.709/2018 (LGPD) e o Código de Processo Civil —, os Locadores e '+art+' '+loc_t+' celebram este contrato sob as cláusulas e condições seguintes:'));
   ps.push(tit('CLÁUSULA PRIMEIRA — DAS PARTES CONTRATANTES'));
   ps.push(par('LOCADOR(ES)',false,true));
-  ps.push(par(locadores.map(l=>l.nome+', '+l.qual+', CPF n.º '+l.cpf+', RG n.º '+l.rg).join(', e ')+', com endereço comercial na Rua São Luís, n.º 25, Lojas 01 e 02, Bairro Jóquei de Itaparica, CEP 29.103-890, Vila Velha/ES, e-mail afraniodemelo@yahoo.com.br | lucienemaurapsicanalise@gmail.com, telefones (27) 9 9834-1799.'));
+  ps.push(par(locadores.map(l=>{const semRG=l.nome&&l.nome.includes('Gabriel');return l.nome+', '+l.qual+', CPF n.º '+l.cpf+(semRG?'':(l.rg&&l.rg!=='_______________'?', RG n.º '+l.rg:''));}).join(', e ')+', com endereço na Rua São Luís, número 25, Lojas 1 e 2, Bairro Jóquei de Itaparica, Vila Velha/ES, CEP 29.103-890.'));
   ps.push(par(loc_t.toUpperCase(),false,true));
   ps.push(par(txtLct1+'.'));
   ps.push(tit('CLÁUSULA SEGUNDA — DO OBJETO E DA FINALIDADE DA LOCAÇÃO'));
