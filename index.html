@@ -34055,6 +34055,15 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     </div>
   </div>
 
+  <!-- HONORÁRIOS IMOBILIÁRIA T3 -->
+  <div class="secao">
+    <div class="secao-titulo">Honorários da Imobiliária</div>
+    <div class="grid g2">
+      <div class="campo"><label>Taxa de Aditamento (R$)</label><input id="t3-imob-adit" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="campo"><label>Taxa de Encerramento (R$)</label><input id="t3-imob-enc" type="number" step="0.01" placeholder="0,00"></div>
+    </div>
+  </div>
+
   <!-- PAGAMENTOS T3 -->
   <div class="secao">
     <div class="secao-titulo">Pagamentos Realizados</div>
@@ -34669,7 +34678,7 @@ function coletarDados(pref){
       ref1:{nome:val('t3-ref1-nome'),tel:val('t3-ref1-tel')},
       ref2:{nome:val('t3-ref2-nome'),tel:val('t3-ref2-tel')},
       financeiro:coletarFinanceiro('t3'),
-      imob:true,imobNome:'Imobiliária Afrânio Melo',imobPix:'877.073.656-15',imobAdit:val('t3-imob-adit')||'',imobEnc:val('t3-imob-enc')||'',
+      imob:true,imobNome:'Imobiliária Afrânio Melo',imobPix:'CNPJ 29.946.290/0001-54',imobAdit:val('t3-imob-adit')||'',imobEnc:val('t3-imob-enc')||'',
       reserva:{val:val('t3-reserva-val'),data:val('t3-reserva-data'),quem:val('t3-reserva-quem'),recv:val('t3-reserva-recv'),pix:val('t3-reserva-pix'),forma:val('t3-reserva-forma')},
       pgtoImob:{val:val('t3-pgto-imob-val'),data:val('t3-pgto-imob-data'),quem:val('t3-pgto-imob-quem'),recv:val('t3-pgto-imob-recv'),pix:val('t3-pgto-imob-pix'),forma:val('t3-pgto-imob-forma')},
       pgtoLoc:{val:val('t3-pgto-loc-val'),data:val('t3-pgto-loc-data'),quem:val('t3-pgto-loc-quem'),recv:val('t3-pgto-loc-recv'),pix:val('t3-pgto-loc-pix'),forma:val('t3-pgto-loc-forma')},
@@ -34910,7 +34919,7 @@ function montarContrato(d){
   h+='<p><strong>3. Das Obrigações '+do_a+' '+loc_t+'</strong> — nos termos do art. 23 da Lei n.º 8.245/1991:</p>';
   h+='<p><strong>a) Manutenção e Entrega do Imóvel:</strong> '+Art+' '+loc_t+' deverá manter o imóvel limpo e em perfeito estado de conservação. No encerramento do contrato, o imóvel deverá ser entregue nas mesmas condições em que foi recebido.</p>';
   h+='<p><strong>b) Autorização para Obras:</strong> '+Art+' '+loc_t+' deverá comunicar previamente ao Locador qualquer obra ou serviço a ser realizado dentro do imóvel.</p>';
-  h+='<p><strong>c) Animais de Estimação:</strong> '+(animais?'Fica expressamente autorizada a permanência de 01 (um) animal doméstico de pequeno porte no imóvel, desde que não cause perturbação à boa vizinhança e respeite as normas do condomínio. O não cumprimento dessas obrigações poderá resultar em rescisão contratual.':'Não é permitida a presença de animais de estimação dentro do imóvel, sob pena de rescisão contratual.')+'</p>';
+  h+='<p><strong>c) Animais de Estimação:</strong> '+(animais?'Fica expressamente autorizada a permanência de 01 (um) animal doméstico de pequeno porte no imóvel, desde que não cause perturbação à boa vizinhança e respeite as normas do condomínio. O(a) '+loc_t+' deverá manter rigorosa higiene ao transportar o animal pelas áreas comuns do edifício, utilizando guia/coleira e, quando necessário, proteção higiênica adequada, sendo responsável por qualquer dano ou sujeira causados pelo animal nas áreas comuns ou no imóvel. O não cumprimento dessas obrigações poderá resultar em rescisão contratual.':'Não é permitida a presença de animais de estimação dentro do imóvel, sob pena de rescisão contratual.')+'</p>';
   h+='<p><strong>d) Uso da Garagem:</strong> '+(vagaDesc?'A vaga de garagem vinculada ao imóvel destina-se exclusivamente ao estacionamento de <strong>'+vagaDesc+'</strong>. É expressamente proibido armazenar qualquer outro objeto na vaga, sob pena de rescisão contratual. O Locador não se responsabiliza por danos, furtos ou quaisquer ocorrências envolvendo o veículo ou pertences deixados na garagem.':'O presente imóvel não possui vaga de garagem, sendo expressamente proibido o uso de qualquer área do condomínio para estacionamento de veículos '+do_a+' '+loc_t+', sob pena de rescisão contratual.')+'</p>';
   h+='<p><strong>e) Seguro Incêndio:</strong> A obrigação do seguro contra incêndio será de responsabilidade '+do_a+' <strong>'+(seguro==='locador'?'Locador':loc_t)+'</strong>, nos termos do art. 22, VIII da Lei n.º 8.245/1991.</p>';
   h+='<p><strong>4. Do Direito de Acesso do Locador ao Imóvel</strong><br>Fica facultado ao Locador comunicar '+ao_a+' '+loc_t+', por qualquer meio inequívoco, para que permita a entrada e fiscalização do imóvel sempre que necessário. Caso '+os_as+' '+loc_ts+' não '+conj('responda','respondam')+' dentro de <strong>48 (quarenta e oito) horas</strong>, fica autorizado que os Locadores, acompanhados de 01 (uma) testemunha, acessem o imóvel e registrem vistoria por vídeo.</p>';
