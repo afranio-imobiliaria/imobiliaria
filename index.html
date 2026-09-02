@@ -35064,15 +35064,10 @@ async function gerarDocx(d){
   const par=(t,center,bold)=>new Paragraph({children:[new TextRun({text:t,bold:!!bold,size:24,font:'Times New Roman'})],alignment:center?AlignmentType.CENTER:AlignmentType.JUSTIFIED,spacing:{after:120,line:276}});
   const tit=(t)=>new Paragraph({children:[new TextRun({text:t,bold:true,size:24,font:'Times New Roman'})],alignment:AlignmentType.JUSTIFIED,spacing:{before:200,after:100,line:276}});
   const esp=()=>new Paragraph({children:[new TextRun({text:'',size:24})],spacing:{after:80}});
-  const assCell=(nome,cpf,cargo)=>new TableCell({
-    borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},
-    children:[
-      new Paragraph({children:[new TextRun({text:'_________________________',size:22,font:'Arial'})],alignment:AlignmentType.CENTER}),
-      new Paragraph({children:[new TextRun({text:nome||'___________________________',bold:true,size:22,font:'Arial'})],alignment:AlignmentType.CENTER}),
-      new Paragraph({children:[new TextRun({text:cpf?'CPF: '+cpf:'',size:20,font:'Arial'})],alignment:AlignmentType.CENTER}),
-      new Paragraph({children:[new TextRun({text:cargo,size:20,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:200}}),
-    ]
-  });
+  const ass=(nome,cpf,cargo)=>new Paragraph({children:[
+    new TextRun({text:'_________________________  ',size:22,font:'Arial'}),
+    new TextRun({text:(nome||'___')+' — CPF: '+(cpf||'___')+' — '+cargo+'     ',size:22,font:'Arial'})
+  ],alignment:AlignmentType.LEFT,spacing:{after:200}});
   const ps=[];
   ps.push(new Paragraph({children:[new TextRun({text:'IMOBILIÁRIA AFRÂNIO CONSULTORIA IMOBILIÁRIA',bold:true,size:28,font:'Arial',color:'1a3a5c'})],alignment:AlignmentType.CENTER,spacing:{after:40}}));
   ps.push(new Paragraph({children:[new TextRun({text:'CRECI 8857F',size:20,font:'Arial',color:'555555'})],alignment:AlignmentType.CENTER,spacing:{after:200}}));
@@ -35129,19 +35124,16 @@ async function gerarDocx(d){
   ps.push(esp());
   ps.push(new Paragraph({children:[new TextRun({text:'Vila Velha/ES, '+diaStr+' de '+mesStr+' de '+anoStr+'.',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:400}}));
 
-  // LOCADORES + LOCATÁRIA lado a lado
+  // LOCADORES + LOCATÁRIA
   ps.push(esp());
-  const cellsLocLct = locadores.map(l=>assCell(l.nome,l.cpf,l.nome.includes('Luciene')?'Locadora':'Locador'));
-  cellsLocLct.push(assCell(lct1.nome||'___________________________',lct1.cpf,loc_t));
-  if(lct2&&lct2.nome) cellsLocLct.push(assCell(lct2.nome,lct2.cpf,loc_t+' 2'));
-  ps.push(new Table({width:{size:100,type:WidthType.PERCENTAGE},rows:[new TableRow({children:cellsLocLct})],borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideH:{style:BorderStyle.NONE},insideV:{style:BorderStyle.NONE}}}));
+  locadores.forEach(l=>{ps.push(ass(l.nome,l.cpf,l.nome.includes('Luciene')?'Locadora':'Locador'));});
+  ps.push(ass(lct1.nome||'___________________________',lct1.cpf,loc_t));
+  if(lct2&&lct2.nome) ps.push(ass(lct2.nome,lct2.cpf,loc_t+' 2'));
 
-  // TESTEMUNHAS lado a lado
+  // TESTEMUNHAS
   ps.push(esp());
-  const cellsTest = [];
-  if(test1.nome) cellsTest.push(assCell(test1.nome,test1.cpf,'Testemunha 1'));
-  if(test2.nome) cellsTest.push(assCell(test2.nome,test2.cpf,'Testemunha 2'));
-  if(cellsTest.length>0) ps.push(new Table({width:{size:60,type:WidthType.PERCENTAGE},rows:[new TableRow({children:cellsTest})],borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideH:{style:BorderStyle.NONE},insideV:{style:BorderStyle.NONE}}}));
+  if(test1.nome)ps.push(ass(test1.nome,test1.cpf,'Testemunha 1'));
+  if(test2.nome)ps.push(ass(test2.nome,test2.cpf,'Testemunha 2'));
 
   ps.push(esp());
   // RODAPÉ
