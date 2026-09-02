@@ -35064,10 +35064,7 @@ async function gerarDocx(d){
   const par=(t,center,bold)=>new Paragraph({children:[new TextRun({text:t,bold:!!bold,size:24,font:'Times New Roman'})],alignment:center?AlignmentType.CENTER:AlignmentType.JUSTIFIED,spacing:{after:120,line:276}});
   const tit=(t)=>new Paragraph({children:[new TextRun({text:t,bold:true,size:24,font:'Times New Roman'})],alignment:AlignmentType.JUSTIFIED,spacing:{before:200,after:100,line:276}});
   const esp=()=>new Paragraph({children:[new TextRun({text:'',size:24})],spacing:{after:80}});
-  const ass=(nome,cpf,cargo)=>new Paragraph({children:[
-    new TextRun({text:'_________________________  ',size:22,font:'Arial'}),
-    new TextRun({text:(nome||'___')+' — CPF: '+(cpf||'___')+' — '+cargo+'     ',size:22,font:'Arial'})
-  ],alignment:AlignmentType.LEFT,spacing:{after:200}});
+  const ass=(nome,cpf,cargo)=>new Paragraph({children:[new TextRun({text:'_________________________\n'+nome+(cpf?'\nCPF n.º '+cpf:'')+'\n'+cargo,size:22,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:300}});
   const ps=[];
   ps.push(new Paragraph({children:[new TextRun({text:'IMOBILIÁRIA AFRÂNIO CONSULTORIA IMOBILIÁRIA',bold:true,size:28,font:'Arial',color:'1a3a5c'})],alignment:AlignmentType.CENTER,spacing:{after:40}}));
   ps.push(new Paragraph({children:[new TextRun({text:'CRECI 8857F',size:20,font:'Arial',color:'555555'})],alignment:AlignmentType.CENTER,spacing:{after:200}}));
@@ -35126,12 +35123,14 @@ async function gerarDocx(d){
 
   // LOCADORES + LOCATÁRIA
   ps.push(esp());
+  ps.push(new Paragraph({children:[new TextRun({text:'LOCADORES',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:200}}));
   locadores.forEach(l=>{ps.push(ass(l.nome,l.cpf,l.nome.includes('Luciene')?'Locadora':'Locador'));});
+  ps.push(esp());
+  ps.push(new Paragraph({children:[new TextRun({text:loc_t.toUpperCase(),bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:200}}));
   ps.push(ass(lct1.nome||'___________________________',lct1.cpf,loc_t));
   if(lct2&&lct2.nome) ps.push(ass(lct2.nome,lct2.cpf,loc_t+' 2'));
-
-  // TESTEMUNHAS
   ps.push(esp());
+  ps.push(new Paragraph({children:[new TextRun({text:'TESTEMUNHAS',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:200}}));
   if(test1.nome)ps.push(ass(test1.nome,test1.cpf,'Testemunha 1'));
   if(test2.nome)ps.push(ass(test2.nome,test2.cpf,'Testemunha 2'));
 
