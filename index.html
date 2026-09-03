@@ -33887,6 +33887,42 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       <div class="campo"><label>E-mail</label><input id="t3-lct-email" type="text"></div>
       <div class="campo"><label>Endereço para notificações</label><input id="t3-lct-endnot" type="text"></div>
     </div>
+
+    <!-- Toggle 2º Locatário -->
+    <div class="toggle-row" style="margin-top:16px">
+      <input type="checkbox" class="toggle" id="t3-tem-lct2" onchange="toggleLct2('t3')">
+      <label for="t3-tem-lct2" id="t3-label-lct2">Adicionar 2.º Locatário(a)</label>
+    </div>
+    <!-- Bloco 2º Locatário -->
+    <div id="t3-lct2-bloco" style="display:none;margin-top:12px;padding:14px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0">
+      <div class="secao-titulo" style="margin-bottom:12px">2.º LOCATÁRIO(A)</div>
+      <div class="grid g2">
+        <div class="campo"><label>Nome completo</label><input id="t3-lct2-nome" type="text"></div>
+        <div class="campo"><label>Gênero</label>
+          <select id="t3-lct2-genero">
+            <option value="F">Feminino — Locatária</option>
+            <option value="M">Masculino — Locatário</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid g3" style="margin-top:8px">
+        <div class="campo"><label>Nacionalidade</label><input id="t3-lct2-nac" type="text" placeholder="brasileira"></div>
+        <div class="campo"><label>Estado Civil</label>
+          <select id="t3-lct2-ec">
+            <option value="solteira">Solteira</option><option value="solteiro">Solteiro</option>
+            <option value="casada">Casada</option><option value="casado">Casado</option>
+            <option value="divorciada">Divorciada</option><option value="divorciado">Divorciado</option>
+          </select>
+        </div>
+        <div class="campo"><label>Profissão</label><input id="t3-lct2-prof" type="text"></div>
+      </div>
+      <div class="grid g3" style="margin-top:8px">
+        <div class="campo"><label>CPF</label><input id="t3-lct2-cpf" type="text"></div>
+        <div class="campo"><label>RG</label><input id="t3-lct2-rg" type="text"></div>
+        <div class="campo"><label>Telefone</label><input id="t3-lct2-tel" type="text"></div>
+      </div>
+      <div class="campo" style="margin-top:8px"><label>E-mail</label><input id="t3-lct2-email" type="text"></div>
+    </div>
   </div>
 
   <!-- Referências pessoais t3 -->
@@ -34786,7 +34822,7 @@ function coletarDados(pref){
     return {
       pref:'t3',tipo:'terceiros',genero:val('t3-lct-genero'),
       lct1:{nome:val('t3-lct-nome'),nac:val('t3-lct-nac'),ec:val('t3-lct-ec'),prof:val('t3-lct-prof'),cpf:val('t3-lct-cpf'),rg:val('t3-lct-rg'),tel:val('t3-lct-tel'),email:val('t3-lct-email'),endnot:val('t3-lct-endnot')},
-      lct2:null,
+      lct2:document.getElementById('t3-tem-lct2')?.checked?{nome:val('t3-lct2-nome'),nac:val('t3-lct2-nac'),ec:val('t3-lct2-ec'),prof:val('t3-lct2-prof'),cpf:val('t3-lct2-cpf'),rg:val('t3-lct2-rg'),tel:val('t3-lct2-tel')}:null,
       imovel:{tipo:val('t3-tipo-im'),numero:val('t3-im-numero'),posicao:val('t3-im-posicao'),end:val('t3-im-end'),edificio:'',quartos:parseInt(val('t3-im-quartos'))||0,banheiros:parseInt(val('t3-im-banheiros'))||1,vaga:val('t3-vaga-det'),vagaLocal:val('t3-vaga-local'),vagaDescLivre:val('t3-vaga-desc-livre'),finalidade:val('t3-im-finalidade'),varanda:false,obs:''},
       cond:val('t3-condominio')==='sim',condVal:val('t3-cond-val'),cesan:val('t3-cesan'),cotas:val('t3-cotas'),cotasTotal:val('t3-cotas-total'),edp:val('t3-edp'),edpInst:val('t3-edp-inst'),gas:val('t3-gas'),internet:val('t3-internet'),seguro:val('t3-seguro'),animais:val('t3-animais')==='sim',chaves:val('t3-chaves'),controles:val('t3-controles'),
       aguaTipo:val('t3-agua-tipo'),
@@ -34832,6 +34868,8 @@ function montarContrato(d){
 
   // Gênero
   const genero=d.genero||'F';
+  const lct2raw=d.lct2||null;
+  const lct2=lct2raw&&lct2raw.nome&&lct2raw.nome.trim()?lct2raw:null;
   const loc_t=genero==='M'?'Locatário':'Locatária';
   const loc_ts=d.lct2?'Locatários':loc_t;
   const loc_Ts=d.lct2?'Os Locatários':(genero==='M'?'O Locatário':'A Locatária');
@@ -34846,7 +34884,6 @@ function montarContrato(d){
   // Dados básicos
   const im=d.imovel||{};
   const lct1=d.lct1||{};
-  const lct2=d.lct2||null;
   const locadores=d.locadores||[];
   const proc=d.proc||{nome:'',cpf:'',rg:''};
   const test1=d.test1||{nome:'',cpf:''};
