@@ -33980,10 +33980,11 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       </div>
       <div class="campo" id="t3-cond-val-campo" style="display:none"><label>Valor (R$)</label><input id="t3-cond-val" type="number" step="0.01"></div>
       <div class="campo"><label>Matrícula CESAN</label><input id="t3-cesan" type="text"></div>
-      <div class="campo"><label>Água — conta em nome da empresa?</label>
-        <select id="t3-agua-pj">
-          <option value="nao">Não — segue padrão</option>
-          <option value="sim">Sim — conta em nome do Locador (empresa)</option>
+      <div class="campo"><label>Água — situação</label>
+        <select id="t3-agua-tipo">
+          <option value="individual">Individual — locatário paga direto à CESAN</option>
+          <option value="condominio">Inclusa no condomínio — rateada</option>
+          <option value="pj_locador">Conta em nome do Locador (empresa)</option>
         </select>
       </div>
     </div>
@@ -34006,8 +34007,9 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     <div class="grid g3" style="margin-top:10px">
       <div class="campo"><label>Gás</label>
         <select id="t3-gas">
-          <option value="individual">Botijão — responsabilidade do locatário</option>
-          <option value="rateado">Encanado — rateado</option>
+          <option value="botijao">Botijão (GLP) — responsabilidade do locatário</option>
+          <option value="individual">Encanado individual — medidor no nome do locatário</option>
+          <option value="condominio">Encanado — incluso no condomínio</option>
           <option value="nao_tem">Não tem</option>
         </select>
       </div>
@@ -34032,8 +34034,22 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
           <option value="locador">Locador</option>
         </select>
       </div>
+      <div class="campo"><label>Permite mudança aos sábados?</label>
+        <select id="t3-mudanca-sabado">
+          <option value="sim">Sim — até 12h00</option>
+          <option value="nao">Não — apenas seg. a sex.</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-top:10px">
+      <div class="campo"><label>Prazo de aviso ao síndico (dias)</label><input id="t3-prazo-sindico" type="number" min="1" value="7" placeholder="Ex: 7"></div>
       <div class="campo"><label>Chaves entregues</label><input id="t3-chaves" type="text" placeholder="Ex: 02 chaves da porta principal"></div>
     </div>
+    <div class="grid g2" style="margin-top:10px">
+      <div class="campo"><label>Controles entregues</label><input id="t3-controles" type="text" placeholder="Ex: 01 controle de portão"></div>
+      <div class="campo"><label>Marca da tinta</label><input id="t3-tinta-marca" type="text" placeholder="Ex: Suvinil, Coral..."></div>
+    </div>
+    <div class="campo" style="margin-top:10px"><label>Cor(es) da pintura</label><input id="t3-tinta-cor" type="text" placeholder="Ex: Branco Gelo em todos os cômodos"></div>
   </div>
 
   <!-- DATAS E VALORES T3 -->
@@ -34045,15 +34061,66 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       <div class="campo"><label>Aluguel (R$)</label><input id="t3-aluguel" type="number" step="0.01"></div>
       <div class="campo"><label>Caução (R$)</label><input id="t3-caucao" type="number" step="0.01"></div>
     </div>
-    <div class="grid g2" style="margin-top:10px">
-      <div class="campo"><label>Favorecido PIX (aluguéis)</label><input id="t3-pix-favor" type="text"></div>
-      <div class="campo"><label>Chave PIX</label><input id="t3-pix-chave" type="text"></div>
+    <!-- PIX Aluguel -->
+    <div class="card-pgto" style="margin-top:12px">
+      <div class="card-titulo">💰 Pagamento do Aluguel</div>
+      <div class="grid g3">
+        <div class="campo"><label>Favorecido</label><input id="t3-pix-favor" type="text" placeholder="Nome do favorecido"></div>
+        <div class="campo"><label>Chave PIX ou dados bancários</label><input id="t3-pix-chave" type="text"></div>
+        <div class="campo"><label>Quem paga</label>
+          <select id="t3-pix-quem-paga">
+            <option value="locatario">Locatário(a)</option>
+            <option value="locador">Locador</option>
+          </select>
+        </div>
+      </div>
     </div>
-    <div class="grid g3" style="margin-top:10px">
+    <!-- PIX Condomínio -->
+    <div class="card-pgto" style="margin-top:12px" id="t3-cond-pix-bloco" style="display:none">
+      <div class="card-titulo">🏢 Pagamento do Condomínio</div>
+      <div class="grid g3">
+        <div class="campo"><label>Favorecido condomínio</label><input id="t3-cond-pix-favor" type="text" placeholder="Nome do síndico ou administradora"></div>
+        <div class="campo"><label>Chave PIX ou dados bancários</label><input id="t3-cond-pix-chave" type="text"></div>
+        <div class="campo"><label>Quem paga</label>
+          <select id="t3-cond-pix-quem">
+            <option value="locatario">Locatário(a)</option>
+            <option value="locador">Locador</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- Campo extra pagamento -->
+    <div class="card-pgto" style="margin-top:12px">
+      <div class="card-titulo">➕ Pagamento Extra (opcional)</div>
+      <div class="campo"><label>Descrição / observação</label><input id="t3-pgto-extra" type="text" placeholder="Ex: Taxa de administração paga pelo locador via depósito..."></div>
+    </div>
+    <!-- Administração Imobiliária -->
+    <div class="card-pgto" style="margin-top:12px">
+      <div class="card-titulo">🏛 Administração Imobiliária (opcional)</div>
+      <div class="toggle-row">
+        <input type="checkbox" class="toggle" id="t3-adm-toggle" onchange="toggleAdmT3()">
+        <label for="t3-adm-toggle">Incluir taxa de administração mensal de <strong>10%</strong> no contrato</label>
+      </div>
+      <div id="t3-adm-bloco" style="display:none;margin-top:12px">
+        <div class="grid g3">
+          <div class="campo"><label>Quem paga os 10%</label>
+            <select id="t3-adm-quem">
+              <option value="locatario">Locatário(a)</option>
+              <option value="locador">Locador</option>
+            </select>
+          </div>
+          <div class="campo"><label>Favorecido (imobiliária)</label><input id="t3-adm-favor" type="text" placeholder="Imobiliária Afrânio Melo"></div>
+          <div class="campo"><label>Chave PIX da imobiliária</label><input id="t3-adm-pix" type="text" placeholder="877.073.656-15"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Procurador -->
+    <div class="grid g3" style="margin-top:12px">
       <div class="campo"><label>Procurador (nome)</label><input id="t3-proc-nome" type="text"></div>
       <div class="campo"><label>CPF procurador</label><input id="t3-proc-cpf" type="text"></div>
       <div class="campo"><label>RG procurador</label><input id="t3-proc-rg" type="text"></div>
     </div>
+    <div class="campo" style="margin-top:10px"><label>Poderes específicos do procurador (texto livre)</label><input id="t3-proc-poderes" type="text" placeholder="Ex: com poderes para assinar recibos, representar perante EDP e CESAN..."></div>
   </div>
 
   <!-- HONORÁRIOS IMOBILIÁRIA T3 -->
@@ -34121,6 +34188,46 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     </div>
     <div id="t3-outros-pgtos"></div>
     <button class="btn-add" onclick="addPgto('t3')">+ Adicionar outro pagamento</button>
+  </div>
+
+  <!-- LAUDO DE VISTORIA POR CÔMODO T3 -->
+  <div class="secao">
+    <div class="secao-titulo">LAUDO DE VISTORIA — ESTADO DO IMÓVEL</div>
+    <p class="hint" style="margin-bottom:12px">Preencha apenas os cômodos existentes. Somente o que for preenchido aparecerá no contrato.</p>
+    <div class="grid g2">
+      <div class="campo"><label>Sala</label><input id="t3-vst-sala" type="text" placeholder="Ex: Paredes em bom estado, piso limpo..."></div>
+      <div class="campo"><label>Cozinha</label><input id="t3-vst-cozinha" type="text" placeholder="Ex: Azulejos íntegros, pia em ordem..."></div>
+      <div class="campo"><label>Área de serviço</label><input id="t3-vst-servico" type="text" placeholder="Ex: Tanque em bom estado..."></div>
+      <div class="campo"><label>Banheiro social</label><input id="t3-vst-banho" type="text" placeholder="Ex: Box, vaso e pia em perfeito estado..."></div>
+    </div>
+    <div style="margin-top:10px" id="t3-quartos-vst-container">
+      <div class="grid g2">
+        <div class="campo"><label>Quarto 1</label><input id="t3-vst-quarto1" type="text" placeholder="Ex: Piso, paredes e janela em bom estado..."></div>
+        <div class="campo"><label>Quarto 2</label><input id="t3-vst-quarto2" type="text" placeholder="Deixe em branco se não houver"></div>
+      </div>
+      <div class="grid g2" style="margin-top:8px">
+        <div class="campo"><label>Quarto 3</label><input id="t3-vst-quarto3" type="text" placeholder="Deixe em branco se não houver"></div>
+        <div class="campo"><label>Suíte</label><input id="t3-vst-suite" type="text" placeholder="Ex: Banheiro privativo em bom estado..."></div>
+      </div>
+    </div>
+    <div class="campo" style="margin-top:10px"><label>Varanda</label><input id="t3-vst-varanda" type="text" placeholder="Deixe em branco se não houver varanda"></div>
+    <!-- Garagem detalhada -->
+    <div class="grid g3" style="margin-top:14px">
+      <div class="campo"><label>Garagem</label>
+        <select id="t3-vaga-det" onchange="toggleVagaT3()">
+          <option value="sem_vaga">Sem vaga</option>
+          <option value="com_vaga">Com vaga demarcada</option>
+        </select>
+      </div>
+      <div class="campo" id="t3-vaga-local-campo" style="display:none"><label>Local da vaga</label>
+        <select id="t3-vaga-local">
+          <option value="subsolo">Subsolo</option>
+          <option value="terreo">Térreo</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+      <div class="campo" id="t3-vaga-desc-campo" style="display:none"><label>Descrição da vaga (livre)</label><input id="t3-vaga-desc-livre" type="text" placeholder="Ex: Vaga n.º 05, próximo ao elevador..."></div>
+    </div>
   </div>
 
   <!-- TESTEMUNHAS T3 -->
@@ -34494,9 +34601,26 @@ function toggleImob(pref){
   const show=g(pref+'-tem-imob').checked;
   g(pref+'-imob-bloco').style.display=show?'':'none';
 }
+function numPorExtenso(n){
+  var m={'1':'um','2':'dois','3':'três','4':'quatro','5':'cinco','6':'seis','7':'sete','8':'oito','9':'nove','10':'dez','14':'quatorze','15':'quinze','30':'trinta'};
+  return m[String(n)]||String(n);
+}
 function toggleCond(pref){
   const show=g(pref+'-condominio').value==='sim';
   g(pref+'-cond-val-campo').style.display=show?'':'none';
+  if(pref==='t3'){
+    const bl=g('t3-cond-pix-bloco');
+    if(bl)bl.style.display=show?'':'none';
+  }
+}
+function toggleAdmT3(){
+  const show=g('t3-adm-toggle').checked;
+  g('t3-adm-bloco').style.display=show?'':'none';
+}
+function toggleVagaT3(){
+  const show=g('t3-vaga-det').value==='com_vaga';
+  g('t3-vaga-local-campo').style.display=show?'':'none';
+  g('t3-vaga-desc-campo').style.display=show?'':'none';
 }
 
 // ADICIONAR PAGAMENTO EXTRA
@@ -34663,10 +34787,18 @@ function coletarDados(pref){
       pref:'t3',tipo:'terceiros',genero:val('t3-lct-genero'),
       lct1:{nome:val('t3-lct-nome'),nac:val('t3-lct-nac'),ec:val('t3-lct-ec'),prof:val('t3-lct-prof'),cpf:val('t3-lct-cpf'),rg:val('t3-lct-rg'),tel:val('t3-lct-tel'),email:val('t3-lct-email'),endnot:val('t3-lct-endnot')},
       lct2:null,
-      imovel:{tipo:val('t3-tipo-im'),numero:val('t3-im-numero'),posicao:val('t3-im-posicao'),end:val('t3-im-end'),edificio:'',quartos:parseInt(val('t3-im-quartos'))||0,banheiros:parseInt(val('t3-im-banheiros'))||1,vaga:val('t3-im-vaga'),finalidade:val('t3-im-finalidade'),varanda:false,obs:''},
-      cond:val('t3-condominio')==='sim',condVal:val('t3-cond-val'),cesan:val('t3-cesan'),cotas:val('t3-cotas'),cotasTotal:val('t3-cotas-total'),edp:val('t3-edp'),edpInst:val('t3-edp-inst'),gas:val('t3-gas'),internet:val('t3-internet'),seguro:val('t3-seguro'),animais:val('t3-animais')==='sim',chaves:val('t3-chaves'),
-      dataIni:val('t3-data-ini'),dataFim:val('t3-data-fim'),aluguel:val('t3-aluguel'),caucao:val('t3-caucao'),pixFavor:val('t3-pix-favor'),pixChave:val('t3-pix-chave'),
-      proc:{nome:val('t3-proc-nome'),cpf:val('t3-proc-cpf'),rg:val('t3-proc-rg')},
+      imovel:{tipo:val('t3-tipo-im'),numero:val('t3-im-numero'),posicao:val('t3-im-posicao'),end:val('t3-im-end'),edificio:'',quartos:parseInt(val('t3-im-quartos'))||0,banheiros:parseInt(val('t3-im-banheiros'))||1,vaga:val('t3-vaga-det'),vagaLocal:val('t3-vaga-local'),vagaDescLivre:val('t3-vaga-desc-livre'),finalidade:val('t3-im-finalidade'),varanda:false,obs:''},
+      cond:val('t3-condominio')==='sim',condVal:val('t3-cond-val'),cesan:val('t3-cesan'),cotas:val('t3-cotas'),cotasTotal:val('t3-cotas-total'),edp:val('t3-edp'),edpInst:val('t3-edp-inst'),gas:val('t3-gas'),internet:val('t3-internet'),seguro:val('t3-seguro'),animais:val('t3-animais')==='sim',chaves:val('t3-chaves'),controles:val('t3-controles'),
+      aguaTipo:val('t3-agua-tipo'),
+      mudancaSabado:val('t3-mudanca-sabado')==='sim',prazoSindico:val('t3-prazo-sindico')||'7',
+      tintaMarca:val('t3-tinta-marca'),tintaCor:val('t3-tinta-cor'),
+      vistoria:{sala:val('t3-vst-sala'),cozinha:val('t3-vst-cozinha'),servico:val('t3-vst-servico'),banho:val('t3-vst-banho'),quarto1:val('t3-vst-quarto1'),quarto2:val('t3-vst-quarto2'),quarto3:val('t3-vst-quarto3'),suite:val('t3-vst-suite'),varanda:val('t3-vst-varanda')},
+      dataIni:val('t3-data-ini'),dataFim:val('t3-data-fim'),aluguel:val('t3-aluguel'),caucao:val('t3-caucao'),
+      pixFavor:val('t3-pix-favor'),pixChave:val('t3-pix-chave'),pixQuemPaga:val('t3-pix-quem-paga'),
+      condPixFavor:val('t3-cond-pix-favor'),condPixChave:val('t3-cond-pix-chave'),condPixQuem:val('t3-cond-pix-quem'),
+      pgtoExtra:val('t3-pgto-extra'),
+      admAtiva:document.getElementById('t3-adm-toggle')?.checked||false,admQuem:val('t3-adm-quem'),admFavor:val('t3-adm-favor'),admPix:val('t3-adm-pix'),
+      proc:{nome:val('t3-proc-nome'),cpf:val('t3-proc-cpf'),rg:val('t3-proc-rg'),poderes:val('t3-proc-poderes')},
       aVenda:val('t3-a-venda')==='sim',comissao:val('t3-comissao'),
       locPJ: document.getElementById('t3-loc-pj')?.checked||false,
       pjRazao: val('t3-pj-razao'), pjCNPJ: val('t3-pj-cnpj'),
@@ -34675,7 +34807,6 @@ function coletarDados(pref){
       pjRepCPF: val('t3-pj-rep-cpf'), pjRepRG: val('t3-pj-rep-rg'),
       pjRepTel: val('t3-pj-rep-tel'), pjRepEmail: val('t3-pj-rep-email'),
       pjRepEnd: val('t3-pj-rep-end'),
-      aguaPJ: val('t3-agua-pj')==='sim',
       ref1:{nome:val('t3-ref1-nome'),tel:val('t3-ref1-tel')},
       ref2:{nome:val('t3-ref2-nome'),tel:val('t3-ref2-tel')},
       financeiro:coletarFinanceiro('t3'),
@@ -34886,91 +35017,138 @@ function montarContrato(d){
   h+='<p><strong>2. Do Valor do Aluguel</strong><br>O aluguel mensal é de <strong>'+fmtM(aluguel)+'</strong>, na modalidade "mora-se para pagar".'+(condTem&&condVal?'<br>O valor mensal do condomínio é de <strong>'+fmtM(condVal)+'</strong>, devendo ser pago até o vencimento, sob pena de multa.':'')+'</p>';
   h+='<p><strong>3. Dos Encargos e Taxas</strong></p>';
   if(condTem)h+='<p><strong>Condomínio:</strong> O valor mensal do condomínio é variável, conforme as despesas do edifício, devendo ser pago até a data de seu vencimento, sob pena de multa.</p>';
-  h+='<p><strong>IPTU:</strong> Permanecerá em nome do Locador, devendo ser pago '+pelo_a+' '+loc_t+' antes do vencimento, sob pena de rescisão contratual.</p>';
-  h+=d.aguaPJ
-    ?'<p><strong>Água:</strong> A conta de água permanecerá em nome do Locador'+(d.locPJ?' ('+d.pjRazao+')':'')+', devendo '+art+' '+loc_t+' efetuar o pagamento diretamente ao representante da empresa'+(d.pjRepNome?', '+d.pjRepNome:'')+', até a data de vencimento, sob pena de rescisão contratual.</p>'
-    :'<p><strong>Água:</strong> A conta de água permanecerá em nome do Locador'+(cesan?' (matrícula CESAN n.º '+cesan+')':'')+' e será rateada conforme cotas definidas, cabendo '+ao_a+' '+loc_t+' o pagamento de '+(cotas||'___')+' cotas de um total de '+(totalCotas||'___')+' cotas, devendo ser efetuado 02 (dois) dias antes do vencimento, sob pena de rescisão contratual.</p>';
-  h+='<p><strong>Energia:</strong> '+edpTxt+'</p>';
-  if(gas==='individual')h+='<p><strong>Gás:</strong> O fornecimento de gás é individual e de responsabilidade exclusiva '+do_a+' '+loc_t+', devendo arcar com a aquisição, substituição do botijão e todos os custos decorrentes de seu consumo.</p>';
-  if(gas==='rateado')h+='<p><strong>Gás:</strong> O fornecimento de gás será rateado entre as unidades do edifício, sendo o valor cobrado juntamente com a taxa condominial, devendo ser pago antes do vencimento, sob pena de rescisão contratual.</p>';
+  h+='<p><strong>4. Do IPTU e da Taxa de Lixo</strong><br>O IPTU e a taxa de lixo permanecerão em nome do Locador, sendo de responsabilidade '+do_a+' '+loc_t+' o pagamento antes do vencimento, sob pena de rescisão contratual, nos termos do art. 23, VIII da Lei n.º 8.245/1991.</p>';
+  // Água
+  var aguaTipo=d.aguaTipo||'individual';
+  if(aguaTipo==='individual'){
+    h+='<p><strong>5. Da Água</strong><br>O fornecimento de água é individualizado'+(cesan?', matrícula CESAN n.º <strong>'+cesan+'</strong>':'')+'. '+Art+' '+loc_t+' é responsável pelo pagamento diretamente à CESAN, conforme seu consumo, sob pena de rescisão contratual.</p>';
+  } else if(aguaTipo==='condominio'){
+    h+='<p><strong>5. Da Água</strong><br>O fornecimento de água é cobrado juntamente com a taxa condominial, estando incluso no valor do condomínio. Não há conta individualizada de água para este imóvel.</p>';
+  } else {
+    h+='<p><strong>5. Da Água</strong><br>A conta de água permanecerá em nome do Locador'+(d.locPJ?' ('+d.pjRazao+')':'')+(cesan?', matrícula CESAN n.º '+cesan:'')+', devendo '+art+' '+loc_t+' efetuar o pagamento diretamente ao representante'+(d.pjRepNome?', '+d.pjRepNome:'')+', até o vencimento, sob pena de rescisão contratual.</p>';
+  }
+  // Gás
+  if(gas==='botijao')h+='<p><strong>5.1 Do Gás</strong><br>O gás de cozinha, tipo botijão (GLP), é de exclusiva responsabilidade '+do_a+' '+loc_t+', que deverá arcar com a aquisição, substituição e todos os custos decorrentes de seu consumo.</p>';
+  else if(gas==='individual')h+='<p><strong>5.1 Do Gás</strong><br>O fornecimento de gás encanado é individualizado, com medidor em nome '+do_a+' '+loc_t+', que responde pelo pagamento diretamente à concessionária, conforme seu consumo.</p>';
+  else if(gas==='condominio')h+='<p><strong>5.1 Do Gás</strong><br>O fornecimento de gás encanado é rateado entre as unidades do edifício e seu custo está incluso na taxa condominial mensal.</p>';
+  h+='<p><strong>6. Da Energia Elétrica</strong><br>'+edpTxt+'</p>';
   if(internet==='locatario')h+='<p><strong>Internet:</strong> A contratação e o pagamento da internet serão de responsabilidade '+do_a+' '+loc_t+', de acordo com o cabeamento disponível no edifício, sob pena de rescisão contratual.</p>';
   if(internet==='locador')h+='<p><strong>Internet:</strong> A internet está inclusa, sendo de responsabilidade do Locador.</p>';
-  h+='<p><strong>4. Dos Pagamentos</strong><br>O pagamento deverá ser realizado até o dia 05 (cinco) de cada mês, podendo ser efetuado até o 10.º (décimo) dia.<br><strong>Favorecido:</strong> '+(pixFavor||'___')+' &nbsp;&nbsp; <strong>Chave PIX:</strong> '+(pixChave||'___')+'<br>Caso necessário, o pagamento poderá ser feito em dinheiro no escritório situado à Rua São Luís, n.º 25, Bairro Jóquei de Itaparica, Vila Velha/ES.</p>';
-  h+='<p><strong>5. Da Renovação</strong><br>A renovação contratual deverá ser comunicada com <strong>60 (sessenta) dias</strong> de antecedência. A renovação deverá ser formalizada através de <strong>aditamento contratual ou novo contrato</strong>, com reajuste pelo índice IGP-M ou conforme o valor de mercado, a critério do Locador.</p>';
-  h+='<p><strong>6. Das Multas</strong><br>Caso o pagamento não seja efetuado dentro do prazo, será aplicada <strong>multa de 10% (dez por cento)</strong> sobre o valor do aluguel, acrescida de <strong>juros de 1% (um por cento) ao mês</strong> e correção monetária pelo <strong>IPCA pro rata die</strong>, nos termos do art. 82 da Lei n.º 8.245/1991 e do art. 406 do Código Civil.</p>';
-  if(caucao>0)h+='<p><strong>7. Da Garantia Contratual — Caução</strong><br>Os contratantes acordaram que será cobrada, como garantia contratual, a modalidade de CAUÇÃO no valor de <strong>'+fmtM(caucao)+'</strong>. A caução será devolvida ao final do encerramento contratual, somente após: (i) vistoria final do imóvel; (ii) entrega das chaves ao Locador; e (iii) comprovação do pagamento de todas as despesas pendentes, em até 30 (trinta) dias. Em caso de quebra contratual, o valor da caução poderá ser retido, sem prejuízo da multa contratual equivalente a <strong>03 (três) aluguéis</strong>, proporcional ao tempo restante.</p>';
+  // Pagamento aluguel
+  var quemPagaAlug=d.pixQuemPaga==='locador'?'Locador':loc_t;
+  h+='<p><strong>7. Dos Pagamentos</strong><br>O pagamento do aluguel deverá ser realizado até o dia 05 (cinco) de cada mês, podendo ser efetuado até o 10.º (décimo) dia.<br>';
+  h+='<strong>Aluguel — Favorecido:</strong> '+(d.pixFavor||'___')+' &nbsp;|&nbsp; <strong>PIX/Depósito:</strong> '+(d.pixChave||'___')+' &nbsp;|&nbsp; <strong>Quem paga:</strong> '+quemPagaAlug+'<br>';
+  if(condTem&&d.condPixFavor){
+    var quemPagaCond=d.condPixQuem==='locador'?'Locador':loc_t;
+    h+='<strong>Condomínio — Favorecido:</strong> '+(d.condPixFavor||'___')+' &nbsp;|&nbsp; <strong>PIX/Depósito:</strong> '+(d.condPixChave||'___')+' &nbsp;|&nbsp; <strong>Quem paga:</strong> '+quemPagaCond+'<br>';
+  }
+  if(d.pgtoExtra)h+='<strong>Observação:</strong> '+d.pgtoExtra+'<br>';
+  h+='Caso necessário, o pagamento poderá ser feito em dinheiro no escritório situado à Rua São Luís, n.º 25, Bairro Jóquei de Itaparica, Vila Velha/ES.</p>';
+  h+='<p><strong>8. Da Renovação e do Reajuste</strong><br>A renovação contratual deverá ser comunicada com <strong>60 (sessenta) dias</strong> de antecedência. A renovação deverá ser formalizada através de <strong>aditamento contratual ou novo contrato</strong>, com reajuste pelo índice <strong>IGP-M</strong> ou conforme o valor de mercado, a critério do Locador, nos termos do art. 18 da Lei n.º 8.245/1991.</p>';
+  h+='<p><strong>9. Da Multa por Atraso</strong><br>O atraso no pagamento do aluguel e demais encargos sujeitará '+art+' '+loc_t+' à <strong>multa moratória de 10% (dez por cento)</strong> sobre o valor devido, nos termos do art. 408 do Código Civil, acrescida de <strong>juros de 1% (um por cento) ao mês</strong>, nos termos do art. 406 do Código Civil — limite legal — e correção monetária pelo <strong>IPCA/IBGE</strong>, calculada pro rata die.</p>';
+  if(caucao>0)h+='<p><strong>10. Da Garantia Contratual — Caução</strong><br>Os contratantes acordaram que será cobrada, como garantia contratual, a modalidade de CAUÇÃO no valor de <strong>'+fmtM(caucao)+'</strong>, equivalente a 03 (três) meses de aluguel, nos termos do art. 38 da Lei n.º 8.245/1991. A caução será devolvida ao final do encerramento contratual, somente após: (i) vistoria final do imóvel; (ii) entrega das chaves ao Locador; e (iii) comprovação do pagamento de todas as despesas pendentes, em até 30 (trinta) dias. Em caso de quebra contratual, o valor da caução poderá ser retido para quitação de débitos, sem prejuízo da multa contratual equivalente a <strong>03 (três) aluguéis</strong>, proporcional ao tempo restante.</p>';
 
   // Pagamentos realizados
   if(blkPgto)h+=blkPgto;
 
   // CLÁUSULA QUARTA — Imobiliária (condicional)
   if(imobSim){
-    h+='<p><strong>CLÁUSULA QUARTA — DO PAGAMENTO DA IMOBILIÁRIA E DOS SERVIÇOS DA IMOBILIÁRIA</strong></p>';
-    h+='<p>A imobiliária <strong>'+imobNome+'</strong> foi contratada pelos Locadores exclusivamente para intermediar e elaborar o presente instrumento de locação, recebendo, a título de remuneração, valor equivalente ao primeiro mês de aluguel, a ser pago via PIX, chave <strong>'+imobPix+'</strong>, em nome de <strong>'+imobNome+'</strong>.</p>';
-    h+='<p>Parágrafo Primeiro — Do Aditamento Contratual: Em caso de renovação contratual intermediada pela imobiliária, será devida taxa de aditamento no valor de <strong>'+fmtM(imobAdit)+'</strong>, via PIX chave <strong>'+imobPix+'</strong>.</p>';
-    h+='<p>Parágrafo Segundo — Da Taxa de Encerramento Contratual: Em caso de encerramento sem renovação, será devida taxa de encerramento no valor de <strong>'+fmtM(imobEnc)+'</strong>.</p>';
-    h+='<p>Parágrafo Terceiro — Dos Serviços: A imobiliária foi contratada exclusivamente para elaborar e intermediar o presente instrumento, encerrando-se sua atuação com a assinatura deste contrato com reconhecimento de firma em Cartório de Notas. Quaisquer demandas posteriores exigirão nova contratação específica.</p>';
+    h+='<p><strong>CLÁUSULA QUARTA — DA INTERMEDIAÇÃO, DA ADMINISTRAÇÃO E DOS SERVIÇOS DA IMOBILIÁRIA</strong></p>';
+    h+='<p>A imobiliária <strong>'+imobNome+'</strong> foi contratada pelos Locadores para intermediar e elaborar o presente instrumento de locação, recebendo, a título de remuneração pela intermediação, valor equivalente ao <strong>primeiro mês de aluguel</strong>, a ser pago via PIX, chave <strong>'+imobPix+'</strong>, em nome de <strong>'+imobNome+'</strong>, nos termos do art. 653 do Código Civil.</p>';
+    if(d.admAtiva){
+      var admQuemTxt=d.admQuem==='locatario'?loc_t:'Locador';
+      var admFavorTxt=d.admFavor||imobNome;
+      var admPixTxt=d.admPix||imobPix;
+      h+='<p>Parágrafo Primeiro — Da Administração Mensal: Além da intermediação, a imobiliária prestará serviços de administração mensal do contrato, fazendo jus a <strong>10% (dez por cento)</strong> sobre o valor do aluguel mensal, a ser pago '+pelo_a+' <strong>'+admQuemTxt+'</strong>, via PIX, chave <strong>'+admPixTxt+'</strong>, em nome de <strong>'+admFavorTxt+'</strong>, nos termos do art. 653 do Código Civil.</p>';
+    }
+    h+='<p>'+(d.admAtiva?'Parágrafo Segundo':'Parágrafo Primeiro')+' — Dos Vícios e Defeitos do Imóvel: A imobiliária <strong>não responde por vícios, defeitos aparentes, ocultos ou estruturais do imóvel</strong>, os quais deverão ser tratados e resolvidos diretamente entre Locadores e '+loc_t+'('+art+'), nos termos dos arts. 22 e 23 da Lei n.º 8.245/1991.</p>';
+    h+='<p>'+(d.admAtiva?'Parágrafo Terceiro':'Parágrafo Segundo')+' — Do Aditamento Contratual: Em caso de renovação contratual intermediada pela imobiliária, será devida taxa de aditamento no valor de <strong>'+fmtM(imobAdit)+'</strong>, via PIX chave <strong>'+imobPix+'</strong>.</p>';
+    h+='<p>'+(d.admAtiva?'Parágrafo Quarto':'Parágrafo Terceiro')+' — Da Taxa de Encerramento Contratual: Em caso de encerramento sem renovação, será devida taxa de encerramento no valor de <strong>'+fmtM(imobEnc)+'</strong>.</p>';
+    h+='<p>'+(d.admAtiva?'Parágrafo Quinto':'Parágrafo Quarto')+' — Dos Serviços: Com a assinatura e o reconhecimento de firma deste instrumento, encerram-se os serviços de intermediação da imobiliária. Quaisquer demandas posteriores exigirão nova contratação específica.</p>';
   }
 
-  // CLÁUSULA VISTORIA
-  h+='<p><strong>CLÁUSULA '+cn('QUARTA')+' — DA VISTORIA DO IMÓVEL, DAS BENFEITORIAS, DO DIREITO DE RETENÇÃO, DA PINTURA, DAS OBRIGAÇÕES '+do_a.toUpperCase()+' '+loc_t.toUpperCase()+' E DO DIREITO DE ACESSO DO LOCADOR</strong></p>';
-  h+='<p>O Locador declara que o imóvel encontra-se em perfeito estado de conservação, em funcionamento e pronto para ser habitado. '+Art+' '+loc_t+' declara ter realizado a vistoria do imóvel e aceitou proceder a esta locação no estado em que o imóvel se encontra, <strong>conforme detalhado no Laudo de Vistoria registrado abaixo, que é parte integrante e indissociável deste contrato.</strong></p>';
-  h+=temLaudo?blkLaudo:'<p><em>(Laudo de vistoria não preenchido — a ser realizado na entrega das chaves.)</em></p>';
-  h+='<p><strong>1. Das Benfeitorias e do Direito de Retenção</strong><br>Nos termos do art. 35 da Lei n.º 8.245/1991, <strong>nenhuma benfeitoria realizada '+pelo_a+' '+loc_t+' será indenizada pelo Locador</strong>, sejam elas necessárias, úteis ou voluptuárias, salvo autorização prévia e expressa do Locador por escrito. '+Art+' '+loc_t+' <strong>renuncia expressamente</strong> ao direito de retenção previsto no art. 578 do Código Civil.</p>';
-  h+='<p><strong>2. Da Pintura do Imóvel</strong><br>O imóvel foi locado com pintura na cor branco-gelo em todos os cômodos, lâmpadas de LED em funcionamento. Ao final deste contrato, a pintura do imóvel deverá ser realizada exclusivamente pelo Locador, por profissional por ele contratado. <strong>OBS.: Fica expressamente proibido furar os azulejos/revestimentos do imóvel locado.</strong></p>';
-  h+='<p><strong>3. Das Obrigações '+do_a+' '+loc_t+'</strong> — nos termos do art. 23 da Lei n.º 8.245/1991:</p>';
-  h+='<p><strong>a) Manutenção e Entrega do Imóvel:</strong> '+Art+' '+loc_t+' deverá manter o imóvel limpo e em perfeito estado de conservação. No encerramento do contrato, o imóvel deverá ser entregue nas mesmas condições em que foi recebido.</p>';
-  h+='<p><strong>b) Autorização para Obras:</strong> '+Art+' '+loc_t+' deverá comunicar previamente ao Locador qualquer obra ou serviço a ser realizado dentro do imóvel.</p>';
-  h+='<p><strong>c) Animais de Estimação:</strong> '+(animais?'Fica expressamente autorizada a permanência de 01 (um) animal doméstico de pequeno porte no imóvel, desde que não cause perturbação à boa vizinhança e respeite as normas do condomínio. O(a) '+loc_t+' deverá manter rigorosa higiene ao transportar o animal pelas áreas comuns do edifício, utilizando guia/coleira e, quando necessário, proteção higiênica adequada, sendo responsável por qualquer dano ou sujeira causados pelo animal nas áreas comuns ou no imóvel. O não cumprimento dessas obrigações poderá resultar em rescisão contratual.':'Não é permitida a presença de animais de estimação dentro do imóvel, sob pena de rescisão contratual.')+'</p>';
-  h+='<p><strong>d) Uso da Garagem:</strong> '+(vagaDesc?'A vaga de garagem vinculada ao imóvel destina-se exclusivamente ao estacionamento de <strong>'+vagaDesc+'</strong>. É expressamente proibido armazenar qualquer outro objeto na vaga, sob pena de rescisão contratual. O Locador não se responsabiliza por danos, furtos ou quaisquer ocorrências envolvendo o veículo ou pertences deixados na garagem.':'O presente imóvel não possui vaga de garagem, sendo expressamente proibido o uso de qualquer área do condomínio para estacionamento de veículos '+do_a+' '+loc_t+', sob pena de rescisão contratual.')+'</p>';
-  h+='<p><strong>e) Seguro Incêndio:</strong> A obrigação do seguro contra incêndio será de responsabilidade '+do_a+' <strong>'+(seguro==='locador'?'Locador':loc_t)+'</strong>, nos termos do art. 22, VIII da Lei n.º 8.245/1991.</p>';
-  h+='<p><strong>4. Do Direito de Acesso do Locador ao Imóvel</strong><br>Fica facultado ao Locador comunicar '+ao_a+' '+loc_t+', por qualquer meio inequívoco, para que permita a entrada e fiscalização do imóvel sempre que necessário. Caso '+os_as+' '+loc_ts+' não '+conj('responda','respondam')+' dentro de <strong>48 (quarenta e oito) horas</strong>, fica autorizado que os Locadores, acompanhados de 01 (uma) testemunha, acessem o imóvel e registrem vistoria por vídeo.</p>';
-
-  // CLÁUSULA ACORDO
-  h+='<p><strong>CLÁUSULA '+cn('QUINTA')+' — DA PESSOALIDADE E DO USO DO IMÓVEL</strong></p>';
-  h+='<p>Este contrato é personalíssimo, firmado exclusivamente entre Locadores e '+loc_ts+'. É expressamente vedada a transferência, sublocação, cessão ou empréstimo do imóvel sem autorização expressa e por escrito dos Locadores.</p>';
-  h+='<p>Parágrafo Primeiro — '+loc_Ts+' '+conj('deverá','deverão')+' comunicar à Imobiliária sempre que houver visitante com permanência superior a <strong>30 (trinta) dias</strong> no imóvel, apresentando seus documentos pessoais (RG e CPF), para que seja registrado como visitante ou, caso passe a residir definitivamente, incluído no contrato como '+loc_t+' mediante <strong>Aditivo Contratual</strong>, podendo o valor do aluguel sofrer alteração conforme acordo entre as partes, a ser formalizado no referido instrumento.</p>';
-  h+='<p>Parágrafo Segundo — O descumprimento do disposto nesta cláusula ensejará rescisão contratual por infração legal, sujeitando '+os_as+' '+loc_ts+' às penalidades previstas neste instrumento.</p>';
-  h+='<p>Parágrafo Primeiro — Da Rescisão: '+loc_Ts+' '+conj('deverá','deverão')+': <strong>I —</strong> comunicar os Locadores com <strong>60 (sessenta) dias</strong> de antecedência; <strong>II —</strong> proceder à vistoria do imóvel; <strong>III —</strong> quitar todas as despesas incluindo aluguel, condomínio, água, energia e pintura.</p>';
-  h+='<p>Parágrafo Segundo — Do Reconhecimento de Firma: É de total responsabilidade '+os_as+' '+loc_ts+' o reconhecimento de firma deste contrato, devendo entregar o instrumento devidamente reconhecido aos Locadores antes de realizar a mudança para o imóvel.</p>';
-  h+='<p>Parágrafo Terceiro — Da Boa Convivência: '+loc_Ts+' '+conj('compromete-se','comprometem-se')+' a cooperar para a manutenção da boa vizinhança, zelando pelo sossego e tranquilidade, nos termos do art. 1.277 do Código Civil e do Decreto-Lei n.º 3.688/1941, arts. 42 e 65. O descumprimento gerará advertência formal e, na reincidência, rescisão contratual.</p>';
-  h+='<p>Parágrafo Quarto — Da Legislação Penal — Lei n.º 11.343/2006: É expressamente proibido utilizar o imóvel para qualquer atividade tipificada como crime nos termos do art. 33 da Lei n.º 11.343/2006, sujeitando o infrator à pena de reclusão de <strong>5 a 15 anos</strong> e rescisão imediata deste contrato.</p>';
-  h+='<p>Parágrafo Quinto — Da Mudança e do Encerramento Contratual: É expressamente vedado '+ao_a+' '+loc_t+' realizar a mudança ou retirar seus pertences do imóvel sem antes comparecer ao escritório da Imobiliária Afrânio Melo, situado na Rua São Luís, n.º 25, Bairro Jóquei de Itaparica, Vila Velha/ES, para formalizar o encerramento contratual e quitar integralmente todas as dívidas decorrentes deste contrato, incluindo aluguéis, encargos, taxas e despesas em aberto. O descumprimento desta obrigação sujeitará '+ao_a+' '+loc_t+' às penalidades previstas neste instrumento, sem prejuízo das medidas judiciais cabíveis. Adicionalmente, a mudança somente poderá ser realizada de <strong>segunda-feira a sexta-feira, em horário comercial, ou aos sábados até as 12h00 (meio-dia)</strong>, devendo '+art+' '+loc_t+' comunicar o síndico do edifício com antecedência mínima de <strong>01 (uma) semana</strong>, sob pena de rescisão contratual e aplicação das multas previstas neste instrumento.</p>';
-
-  // CLÁUSULA SEXTA
-  h+='<p><strong>CLÁUSULA '+cn('SEXTA')+' — DA CLÁUSULA PENAL, DO TÍTULO EXECUTIVO, DAS MULTAS CONTRATUAIS, DA RETENÇÃO, DOS VALORES PAGOS COMO CAUÇÃO, DA RESERVA, DA DESISTÊNCIA E DA VALIDADE DAS NOTIFICAÇÕES JUDICIAIS E EXTRAJUDICIAIS</strong></p>';
-  h+='<p>Parágrafo Primeiro — Da Cláusula Penal e do Título Executivo: Os contratantes estão cientes de que este contrato constitui <strong>título executivo extrajudicial e judicial</strong>, nos termos do art. 784, III, do Código de Processo Civil. Em caso de descumprimento contratual, transcorridos <strong>05 (cinco) dias</strong> do vencimento não adimplido, os Locadores poderão executar este instrumento. '+loc_Ts+' '+conj('responderá','responderão')+' pelos <strong>honorários advocatícios de 20% (vinte por cento)</strong> sobre o valor da causa, além de todas as custas judiciais decorrentes.</p>';
-  h+='<p>Parágrafo Segundo — Das Multas Contratuais: Caso '+os_as+' '+loc_ts+' '+conj('quebre','quebrem')+' este contrato, será cobrada multa contratual no valor equivalente a <strong>03 (três) aluguéis</strong>, proporcional ao tempo restante. Caso o inadimplemento seja imputado ao Locador, este deverá pagar multa equivalente a <strong>03 (três) aluguéis</strong>, proporcional ao período remanescente.</p>';
-  h+='<p>Parágrafo Terceiro — Da Retenção e dos Valores Pagos como Caução: Em caso de quebra contratual, o valor pago como garantia contratual — caução — poderá ser retido pelos Locadores para custear as despesas contratuais decorrentes do inadimplemento, independentemente da aplicação da multa contratual prevista no Parágrafo Segundo desta Cláusula.</p>';
-  h+='<p>Parágrafo Quarto — Da Reserva do Imóvel: Caso os candidatos à locação realizem a reserva do imóvel, deverão pagar sinal'+(reserva>0?' no valor de <strong>'+fmtM(reserva)+'</strong>':'')+', a título de arras confirmatórias, nos termos dos arts. 417 a 420 do Código Civil. O valor pago a título de reserva <strong>não será devolvido</strong> em caso de desistência pelos candidatos, independentemente do motivo, nos termos do art. 418 do Código Civil. Se os candidatos não concluírem a assinatura e o pagamento em <strong>02 (dois) dias corridos</strong>, perderão integralmente o valor pago a título de reserva. Adicionalmente, os candidatos deverão pagar ao advogado responsável e ao corretor de imóveis valor equivalente a <strong>50% (cinquenta por cento)</strong> do aluguel, nos termos do art. 389 do Código Civil.</p>';
-  h+='<p>Parágrafo Quinto — Da Desistência Após a Assinatura: Caso '+os_as+' '+loc_ts+' '+conj('desista','desistam')+' após a assinatura do contrato, apresentação de documentos e pagamento do primeiro aluguel, por motivos pessoais, '+conj('fará','farão')+' jus à devolução de apenas <strong>40% (quarenta por cento)</strong> dos valores pagos, retendo os Locadores os demais <strong>60% (sessenta por cento)</strong> a título de compensação pelas despesas administrativas e pela retirada do imóvel do mercado.</p>';
-  h+='<p>Parágrafo Sexto — Da Validade das Notificações e do Endereço para Citações: Todas as notificações, advertências e intimações serão consideradas válidas quando enviadas por qualquer meio que garanta ciência inequívoca ao destinatário — e-mail, WhatsApp, carta registrada ou notificação assinada. O descumprimento de qualquer cláusula poderá gerar advertência formal e, na <strong>3.ª (terceira) infração</strong>, os Locadores poderão exigir a desocupação do imóvel no prazo de <strong>30 (trinta) dias</strong>. '+loc_Ts+' '+conj('indica','indicam')+' como endereço válido para notificações e citações: <strong>'+(endNot||'_______________')+'</strong>.</p>';
-  h+='<p>Parágrafo Sétimo — Da Correção Monetária: Em caso de inadimplência, todos os valores em aberto serão corrigidos pelo <strong>IPCA</strong> pro rata die, acrescidos de <strong>multa de 10%</strong> e <strong>juros de 1% ao mês</strong>, nos termos do art. 406 do Código Civil e do art. 82 da Lei n.º 8.245/1991.</p>';
-
-  // CLÁUSULA SÉTIMA
-  h+='<p><strong>CLÁUSULA '+cn('SÉTIMA')+' — DAS REGRAS GERAIS, DA PROCURAÇÃO, DO MANDATO, DO DIREITO DE PREFERÊNCIA E DA PROTEÇÃO DE DADOS — LEI N.º 13.709/2018</strong></p>';
-  h+='<p>Os serviços de imobiliária, corretores e escritório de advocacia foram contratados pelos Locadores exclusivamente para intermediar e elaborar o presente instrumento. Com a assinatura e o reconhecimento de firma, encerram-se integralmente os serviços e a responsabilidade jurídica, nos termos do art. 35 da Lei n.º 8.245/1991 e dos arts. 653 a 692 do Código Civil.</p>';
-  if(imobSim){
-    h+='<p>Parágrafo Primeiro — Do Aditamento Contratual: Em caso de renovação do contrato por meio da imobiliária <strong>'+imobNome+'</strong>, será devida taxa de aditamento no valor de <strong>'+fmtM(imobAdit)+'</strong>, a ser pago via PIX, chave <strong>'+imobPix+'</strong>.</p>';
-    h+='<p>Parágrafo Segundo — Da Taxa de Encerramento Contratual: Em caso de encerramento do contrato sem renovação intermediada pela imobiliária, será devida taxa de encerramento no valor de <strong>'+fmtM(imobEnc)+'</strong>.</p>';
+  // CLÁUSULA QUINTA — VISTORIA
+  // Laudo por cômodo
+  var vst=d.vistoria||{};
+  var laudoCom='';
+  if(vst.sala)laudoCom+='<strong>Sala:</strong> '+vst.sala+'<br>';
+  if(vst.cozinha)laudoCom+='<strong>Cozinha:</strong> '+vst.cozinha+'<br>';
+  if(vst.servico)laudoCom+='<strong>Área de serviço:</strong> '+vst.servico+'<br>';
+  if(vst.banho)laudoCom+='<strong>Banheiro social:</strong> '+vst.banho+'<br>';
+  if(vst.quarto1)laudoCom+='<strong>Quarto 1:</strong> '+vst.quarto1+'<br>';
+  if(vst.quarto2)laudoCom+='<strong>Quarto 2:</strong> '+vst.quarto2+'<br>';
+  if(vst.quarto3)laudoCom+='<strong>Quarto 3:</strong> '+vst.quarto3+'<br>';
+  if(vst.suite)laudoCom+='<strong>Suíte:</strong> '+vst.suite+'<br>';
+  if(vst.varanda)laudoCom+='<strong>Varanda:</strong> '+vst.varanda+'<br>';
+  var tintaMarca=d.tintaMarca||'';
+  var tintaCor=d.tintaCor||'branco gelo em todos os cômodos';
+  // Garagem detalhada
+  var temVagaDet=im.vaga==='com_vaga';
+  var vagaLocalTxt=im.vagaLocal==='subsolo'?'subsolo':im.vagaLocal==='terreo'?'térreo':'conforme descrito';
+  var vagaDescLivre=im.vagaDescLivre||'';
+  h+='<p><strong>CLÁUSULA '+cn('QUINTA')+' — DA VISTORIA DO ESTADO DO IMÓVEL, DAS BENFEITORIAS E DAS OBRIGAÇÕES '+do_a.toUpperCase()+' '+loc_t.toUpperCase()+'</strong></p>';
+  h+='<p>O Locador declara que o imóvel encontra-se em perfeito estado de conservação e pronto para ser habitado. '+Art+' '+loc_t+' declara ter realizado a vistoria e aceitou proceder a esta locação no estado em que o imóvel se encontra, conforme detalhado abaixo, sendo este laudo parte integrante e indissociável deste contrato.</p>';
+  if(laudoCom){
+    h+='<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px;margin:8px 0"><strong>LAUDO DE VISTORIA POR CÔMODO:</strong><br>'+laudoCom+'</div>';
   }
-  var pSeg=imobSim?'Terceiro':'Primeiro';
-  var pProc=imobSim?'Quarto':'Segundo';
-  var pPref=imobSim?'Quinto':'Terceiro';
-  var pChav=imobSim?'Sexto':'Quarto';
-  var pLGPD=imobSim?'Sétimo':'Quinto';
-  h+='<p>Parágrafo '+pSeg+' — Da Responsabilidade pelas Custas e Honorários: Quem der causa à quebra contratual arcará com: <strong>I —</strong> honorários advocatícios de 20%; <strong>II —</strong> custas processuais; <strong>III —</strong> despesas com notificações e cartórios; <strong>IV —</strong> perdas e danos (arts. 402-405 do Código Civil); <strong>V —</strong> multa, correção pelo IPCA e juros de 1% ao mês. A tolerância não gera direito adquirido.</p>';
-  h+='<p>Parágrafo '+pProc+' — Da Procuração e do Mandato: Os Locadores nomeiam como procurador e administrador <strong>'+(proc.nome||'___')+'</strong>, CPF n.º <strong>'+(proc.cpf||'___')+'</strong>, RG n.º <strong>'+(proc.rg||'___')+'</strong>, outorgando-lhe poderes para atuar perante a EDP, a CESAN e demais órgãos públicos. A inércia '+do_a+' '+loc_t+' por <strong>48 (quarenta e oito) horas</strong> após notificação autoriza o procurador a agir diretamente.</p>';
+  h+='<p><strong>1. Da Pintura e dos Acabamentos</strong><br>O imóvel foi entregue com <strong>pintura nova</strong>'+(tintaMarca?', tinta <strong>'+tintaMarca+'</strong>':'')+', na(s) cor(es): <strong>'+tintaCor+'</strong>, lâmpadas de LED em funcionamento. Fica reservado ao Locador, ao final deste contrato, refazer a pintura e os reparos do imóvel com profissional de sua confiança, utilizando parte dos valores pagos como caução, nos termos do art. 22 da Lei n.º 8.245/1991.</p>';
+  h+='<p><strong>2. Das Proibições</strong><br>Fica expressamente proibido '+ao_a+' '+loc_t+': (I) executar obras, reformas, alterações estruturais ou mudanças na pintura externa/interna sem prévia e expressa autorização escrita dos Locadores, nos termos do art. 23, VI da Lei n.º 8.245/1991; (II) perfurar azulejos e revestimentos cerâmicos sem autorização; (III) sublocar, ceder ou emprestar o imóvel, total ou parcialmente, sem autorização expressa dos Locadores.</p>';
+  // Garagem
+  if(temVagaDet){
+    h+='<p><strong>3. Da Garagem — Vaga Demarcada</strong><br>O imóvel possui vaga de garagem demarcada, localizada no <strong>'+vagaLocalTxt+'</strong>. '+(vagaDescLivre?'Descrição: <strong>'+vagaDescLivre+'</strong>. ':'')+' Foram entregues na assinatura: <strong>'+(d.controles||'—')+' controle(s)</strong> e <strong>'+chaves+'</strong>. A vaga destina-se exclusivamente ao uso '+do_a+' '+loc_t+', sendo vedado armazenar objetos na mesma, sob pena de rescisão. O Locador não se responsabiliza por danos, furtos ou ocorrências na garagem.</p>';
+  } else {
+    h+='<p><strong>3. Da Garagem</strong><br>O presente imóvel não possui vaga de garagem, sendo expressamente proibido o uso de qualquer área do condomínio para estacionamento de veículos '+do_a+' '+loc_t+', sob pena de rescisão contratual. Foram entregues na assinatura: <strong>'+chaves+'</strong>'+(d.controles?' e <strong>'+d.controles+'</strong>':'')+'.</p>';
+  }
+  h+='<p><strong>4. Dos Animais de Estimação</strong><br>'+(animais?'Fica expressamente autorizada a permanência de <strong>01 (um) animal doméstico de pequeno porte</strong> no imóvel, sob responsabilidade '+do_a+' '+loc_t+', desde que não cause perturbação à boa vizinhança e respeite as normas do condomínio. '+Art+' '+loc_t+' deverá manter rigorosa higiene ao transitar com o animal pelas áreas comuns do edifício, utilizando guia/coleira e, quando necessário, proteção higiênica adequada, sendo responsável por qualquer dano ou sujeira causados pelo animal. O não cumprimento ensejará rescisão contratual.':'<strong>Não é permitida</strong> a presença de animais de estimação dentro do imóvel, sob pena de rescisão contratual, nos termos do art. 23, IV da Lei n.º 8.245/1991.')+'</p>';
+  h+='<p><strong>5. Das Obrigações '+do_a+' '+loc_t+'</strong> — nos termos do art. 23 da Lei n.º 8.245/1991:</p>';
+  h+='<p><strong>a)</strong> Conservar o imóvel e devolvê-lo nas mesmas condições em que foi recebido; <strong>b)</strong> Comunicar defeitos ao Locador imediatamente após constatá-los; <strong>c)</strong> Respeitar o regimento interno do condomínio; <strong>d)</strong> Permitir vistorias com aviso prévio de 48 (quarenta e oito) horas; <strong>e)</strong> Não hospedar terceiros por mais de <strong>30 (trinta) dias</strong> sem comunicação à Imobiliária — ultrapassado esse prazo, '+art+' '+loc_t+' deverá apresentar os documentos do hóspede, podendo o Locador autorizar sua inclusão no contrato mediante Aditivo Contratual, com possível variação do valor do aluguel, conforme art. 9.º da Lei n.º 8.245/1991; <strong>f)</strong> Seguro incêndio: responsabilidade '+do_a+' <strong>'+(seguro==='locador'?'Locador':loc_t)+'</strong>, nos termos do art. 22, VIII da Lei n.º 8.245/1991.</p>';
+  h+='<p><strong>6. Do Direito de Acesso do Locador</strong><br>Fica facultado ao Locador comunicar '+ao_a+' '+loc_t+', por qualquer meio inequívoco, para que permita a entrada e fiscalização do imóvel. Caso '+os_as+' '+loc_ts+' não '+conj('responda','respondam')+' dentro de <strong>48 (quarenta e oito) horas</strong>, fica autorizado que os Locadores, acompanhados de 01 (uma) testemunha, acessem o imóvel e registrem vistoria por vídeo.</p>';
+
+  // CLÁUSULA SEXTA — RESCISÃO, DESOCUPAÇÃO E ENCERRAMENTO
+  var prazoSind=d.prazoSindico||'7';
+  var mudSabado=d.mudancaSabado!==false;
+  h+='<p><strong>CLÁUSULA '+cn('SEXTA')+' — DA RESCISÃO, DA DESOCUPAÇÃO E DO ENCERRAMENTO CONTRATUAL</strong></p>';
+  h+='<p><strong>1. Da Rescisão pelos Locatários</strong><br>'+loc_Ts+' '+conj('deverá','deverão')+', nos termos do art. 6.º da Lei n.º 8.245/1991: <strong>I —</strong> comunicar os Locadores com <strong>60 (sessenta) dias</strong> de antecedência; <strong>II —</strong> permitir a vistoria final do imóvel; <strong>III —</strong> quitar integralmente todos os encargos, incluindo aluguéis, condomínio, água, energia, gás e pintura, nos termos do art. 4.º da Lei n.º 8.245/1991.</p>';
+  h+='<p><strong>2. Da Mudança</strong><br>A retirada de pertences e a mudança somente serão permitidas de <strong>segunda-feira a sexta-feira, em horário comercial</strong>'+(mudSabado?', <strong>ou aos sábados até as 12h00 (meio-dia)</strong>':'')+', devendo '+art+' '+loc_t+' comunicar a <strong>Imobiliária</strong> e ao <strong>síndico do edifício</strong> com antecedência mínima de <strong>'+prazoSind+' ('+numPorExtenso(prazoSind)+') dias</strong>, sob pena de rescisão contratual e aplicação das multas previstas neste instrumento, nos termos do art. 23, III da Lei n.º 8.245/1991. A retirada de pertences sem quitação integral e vistoria final sujeitará '+ao_a+' '+loc_t+' às penalidades contratuais, sem prejuízo das medidas judiciais cabíveis. É expressamente vedado '+ao_a+' '+loc_t+' realizar a mudança sem antes comparecer ao escritório da <strong>Imobiliária Afrânio Melo</strong>, situado na Rua São Luís, n.º 25, Bairro Jóquei de Itaparica, Vila Velha/ES, para formalizar o encerramento e quitar todas as dívidas em aberto.</p>';
+  h+='<p><strong>3. Do Reconhecimento de Firma</strong><br>'+loc_Ts+' '+conj('deverá','deverão')+' providenciar o reconhecimento de firma deste contrato em Cartório de Notas e entregar a via original devidamente reconhecida na Imobiliária antes de realizar a mudança para o imóvel. Este contrato constitui <strong>título executivo extrajudicial</strong>, nos termos do art. 784, III, do Código de Processo Civil.</p>';
+  h+='<p><strong>4. Da Boa Convivência</strong><br>'+loc_Ts+' '+conj('compromete-se','comprometem-se')+' a respeitar a legislação vigente e o regimento interno do edifício, zelando pelo sossego e tranquilidade dos demais condôminos, nos termos do art. 1.277 do Código Civil e do Decreto-Lei n.º 3.688/1941, arts. 42 e 65. O descumprimento gerará advertência formal e, na reincidência, rescisão contratual.</p>';
+  h+='<p><strong>5. Do Uso Ilícito</strong><br>É expressamente vedado '+ao_a+' '+loc_t+' utilizar o imóvel para atividades ilícitas, criminosas ou imorais, nos termos do art. 23, II da Lei n.º 8.245/1991. O uso para atividades tipificadas como crime, especialmente nos termos do art. 33 da Lei n.º 11.343/2006, sujeitará o infrator a pena de reclusão de <strong>5 a 15 anos</strong> e à rescisão imediata deste contrato.</p>';
+
+  // CLÁUSULA SÉTIMA — PENAL, TÍTULO EXECUTIVO E DESISTÊNCIA
+  h+='<p><strong>CLÁUSULA '+cn('SÉTIMA')+' — DA CLÁUSULA PENAL, DO TÍTULO EXECUTIVO E DA DESISTÊNCIA</strong></p>';
+  h+='<p><strong>1. Do Título Executivo</strong><br>Os contratantes estão cientes de que este contrato constitui <strong>título executivo extrajudicial</strong>, nos termos do art. 784, III, do Código de Processo Civil. Em caso de inadimplemento, a parte inadimplente pagará <strong>honorários advocatícios de 20% (vinte por cento)</strong> sobre o valor da causa, além das custas processuais e demais despesas, nos termos dos arts. 402 a 405 do Código Civil.</p>';
+  h+='<p><strong>2. Da Multa por Quebra Contratual</strong><br>A rescisão antecipada ou quebra contratual sujeitará a parte infratora à multa equivalente a <strong>03 (três) aluguéis</strong>, proporcional ao tempo restante do contrato, <strong>aplicável a ambas as partes</strong> — Locadores e '+loc_t+'('+art+') —, nos termos do art. 4.º da Lei n.º 8.245/1991. A tolerância não gera direito adquirido.</p>';
+  h+='<p><strong>3. Da Caução em Caso de Inadimplemento</strong><br>Em caso de quebra contratual '+pelo_a+' '+loc_t+'('+art+'), o valor pago como caução poderá ser retido pelos Locadores para quitação de débitos pendentes, independentemente da aplicação da multa contratual prevista no item anterior.</p>';
+  h+='<p><strong>4. Da Validade das Notificações</strong><br>Todas as notificações, advertências e intimações serão consideradas válidas e recebidas quando enviadas por qualquer meio que garanta ciência inequívoca ao destinatário — e-mail, WhatsApp, carta registrada ou notificação escrita assinada — em até <strong>48 (quarenta e oito) horas</strong> após o envio, nos termos do art. 26 da Lei n.º 8.245/1991. '+loc_Ts+' '+conj('indica','indicam')+' como endereço válido para notificações e citações: <strong>'+(endNot||'_______________')+'</strong>.</p>';
+  h+='<p><strong>5. Da Desistência Antes da Assinatura</strong><br>Após o pagamento e a entrega de documentos, caso a assinatura não ocorra em <strong>02 (dois) dias corridos</strong>, serão devolvidos apenas <strong>40% (quarenta por cento)</strong> dos valores pagos, retendo os Locadores os demais 60%, a título de arras confirmatórias, nos termos dos arts. 417 a 420 do Código Civil.</p>';
+  h+='<p><strong>6. Da Desistência Após a Assinatura</strong><br>A desistência '+pelo_a+' '+loc_t+'('+art+') após a assinatura deste instrumento implica <strong>perda integral dos valores pagos</strong>, a título de indenização pelos danos causados pela retirada do imóvel do mercado e pelas despesas administrativas incorridas, nos termos do art. 418 do Código Civil e do art. 389 do Código Civil.</p>';
+  h+='<p><strong>7. Da Correção em Caso de Inadimplência</strong><br>Todos os valores em aberto serão corrigidos pelo <strong>IPCA/IBGE</strong> pro rata die, acrescidos de multa de <strong>10%</strong> e juros de <strong>1% ao mês</strong>, nos termos do art. 406 do Código Civil.</p>';
+
+  // CLÁUSULA OITAVA — MANDATO, VENDA, PREFERÊNCIA E LGPD
+  var pProc='Primeiro';
+  var pComun='Segundo';
+  var pDesp='Terceiro';
+  var pVenda='Quarto';
+  var pPref='Quinto';
+  var pLGPD='Sexto';
+  var pChav='Sétimo';
+  h+='<p><strong>CLÁUSULA '+cn('OITAVA')+' — DO MANDATO, DA VENDA, DO DIREITO DE PREFERÊNCIA E DA PROTEÇÃO DE DADOS — LGPD</strong></p>';
+  h+='<p>Parágrafo '+pProc+' — Da Procuração e do Mandato: Os Locadores nomeiam como procurador e administrador <strong>'+(proc.nome||'___')+'</strong>, CPF n.º <strong>'+(proc.cpf||'___')+'</strong>, RG n.º <strong>'+(proc.rg||'___')+'</strong>, outorgando-lhe poderes para agir perante a <strong>EDP, a CESAN</strong> e demais órgãos públicos e privados para o interesse desta locação'+(proc.poderes?', bem como: '+proc.poderes:'')+', nos termos dos arts. 653 a 692 do Código Civil.</p>';
+  h+='<p>Parágrafo '+pComun+' — Da Validade das Comunicações: São válidas e consideradas recebidas em até <strong>48 (quarenta e oito) horas</strong> todas as comunicações realizadas por <strong>e-mail, WhatsApp, carta registrada ou notificação escrita</strong>, nos termos do art. 26 da Lei n.º 8.245/1991.</p>';
+  h+='<p>Parágrafo '+pDesp+' — Do Despejo por Infração Contratual: Na ocorrência da <strong>3.ª (terceira) infração contratual</strong>, os Locadores poderão exigir a desocupação do imóvel no prazo de <strong>30 (trinta) dias</strong>, sem prejuízo das demais medidas legais cabíveis, nos termos do art. 9.º, II e art. 23 da Lei n.º 8.245/1991.</p>';
   if(aVenda){
-    h+='<p>Parágrafo '+pPref+' — Do Direito de Preferência e da Venda do Imóvel: Fica assegurado '+ao_a+' '+loc_t+' o <strong>direito de preferência na aquisição do imóvel locado</strong>, com prazo de <strong>30 (trinta) dias</strong> para manifestação após notificação escrita, nos termos dos arts. 27, 28 e 29 da Lei n.º 8.245/1991.</p>';
-    if(comissao)h+='<p>Da Comissão de Corretagem em Caso de Venda: Caso os Locadores contratem a imobiliária para intermediar a venda do imóvel, será devida comissão de corretagem no percentual de <strong>'+comissao+'% ('+comissao+' por cento)</strong> sobre o valor total da venda, nos termos dos arts. 722 a 729 do Código Civil.</p>';
-  }
-  h+='<p>Parágrafo '+pChav+' — Da Entrega e Devolução das Chaves: '+loc_Ts+' '+conj('declara','declaram')+' ter recebido <strong>'+chaves+'</strong>, em perfeito estado, dando plena quitação. A devolução de todas as chaves é condição indispensável para o encerramento contratual.</p>';
-  h+='<p>Parágrafo '+pLGPD+' — Da Proteção de Dados — LGPD: As partes <strong>consentem livre e inequivocamente</strong> com o tratamento de seus dados pessoais para fins exclusivos de execução deste contrato (art. 7.º, I da Lei n.º 13.709/2018). '+loc_Ts+' '+conj('autoriza','autorizam')+' a consulta e registro de dados em cadastros de proteção ao crédito em caso de inadimplência.</p>';
+    h+='<p>Parágrafo '+pVenda+' — Da Venda do Imóvel e da Exclusividade da Imobiliária: O imóvel encontra-se à venda durante a vigência deste contrato de locação. Fica estabelecido que a <strong>Imobiliária Afrânio Melo — CRECI 8857F</strong>, sediada na Rua São Luís, n.º 25, Lojas 01 e 02, Bairro Jóquei de Itaparica, Vila Velha/ES, terá <strong>exclusividade na intermediação da venda</strong>, fazendo jus à comissão de <strong>'+(comissao||'6')+'% ('+numPorExtenso(comissao||'6')+' por cento)</strong> sobre o valor total da transação, nos termos do art. 722 do Código Civil e da tabela do CRECI-ES.</p>';\n  }
+  // Direito de preferência sempre aparece
+  h+='<p>Parágrafo '+pPref+' — Do Direito de Preferência: Fica assegurado '+ao_a+' '+loc_t+' o <strong>direito de preferência na aquisição do imóvel locado</strong>, devendo '+art+' '+loc_t+' manifestar interesse por escrito em até <strong>30 (trinta) dias</strong> após ser formalmente notificado '+pelo_a+' Locador, nas mesmas condições oferecidas a terceiros, nos termos dos arts. 27, 28 e 29 da Lei n.º 8.245/1991.</p>';
+  h+='<p>Parágrafo '+pLGPD+' — Da Proteção de Dados — LGPD: As partes <strong>consentem livre e inequivocamente</strong> com o tratamento de seus dados pessoais para fins exclusivos de execução deste contrato (art. 7.º, I da Lei n.º 13.709/2018), garantidos os direitos de acesso, retificação e exclusão previstos nos arts. 17 a 22 da mesma lei. '+loc_Ts+' '+conj('autoriza','autorizam')+' a consulta e registro de dados em cadastros de proteção ao crédito em caso de inadimplência.</p>';
+  h+='<p>Parágrafo '+pChav+' — Da Entrega e Devolução das Chaves: '+loc_Ts+' '+conj('declara','declaram')+' ter recebido <strong>'+chaves+'</strong>'+(d.controles?' e <strong>'+d.controles+'</strong>':'')+', em perfeito estado, dando plena quitação. A devolução de todos os itens é condição indispensável para o encerramento contratual.</p>';
 
-  // CLÁUSULA OITAVA — FORO
-  h+='<p><strong>CLÁUSULA '+cn('OITAVA')+' — DO FORO E DOS MEIOS DE SOLUÇÃO DE CONFLITO</strong></p>';
-  h+='<p>Estando as partes contratantes de acordo com todos os termos deste contrato de locação, elegem o foro de <strong>Vila Velha, Estado do Espírito Santo</strong>, para dirimir eventuais controvérsias. Em caso de litígios, comprometem-se a buscar, primeiramente, <strong>conciliação e mediação</strong>. As comunicações poderão ser feitas por <strong>e-mail, mensagem criptografada ou notificação escrita</strong>. Não obtido o acordo em até <strong>10 (dez) dias</strong>, poderá a parte interessada promover a ação judicial cabível. Aplicam-se à relação contratual as Leis n.º 9.099/1995, n.º 9.307/1996, n.º 10.406/2002, n.º 13.140/2015 e o Código de Processo Civil.</p>';
+  // Pagamentos realizados
+  if(blkPgto)h+=blkPgto;
+
+  // CLÁUSULA NONA — FORO
+  h+='<p><strong>CLÁUSULA '+cn('NONA')+' — DAS RESOLUÇÕES E DOS CONFLITOS</strong></p>';
+  h+='<p>Fica eleito o foro da <strong>Comarca de Vila Velha, Estado do Espírito Santo</strong>, para dirimir quaisquer dúvidas ou litígios decorrentes deste instrumento. As partes comprometem-se a buscar, primeiramente, <strong>conciliação ou mediação</strong> em até <strong>10 (dez) dias</strong> antes de recorrerem ao Poder Judiciário. Não obtido o acordo, poderá a parte interessada promover a ação judicial cabível. Aplicam-se à presente relação contratual as Leis n.º <strong>8.245/1991</strong> (Lei do Inquilinato), n.º <strong>10.406/2002</strong> (Código Civil), n.º <strong>13.105/2015</strong> (Código de Processo Civil) e demais normas pertinentes.</p>';
 
   // ASSINATURAS
   h+='<hr style="border:none;border-top:1px solid #ccc;margin:24px 0">';
@@ -34978,26 +35156,28 @@ function montarContrato(d){
   h+='<p>As partes declaram: <strong>I —</strong> Ter procedido à leitura integral deste instrumento; <strong>II —</strong> Que todos os dados pessoais informados estão em conformidade com os documentos originais; <strong>III —</strong> Este instrumento é firmado em <strong>02 (duas) vias de igual teor e forma</strong>; <strong>IV —</strong> Este contrato constitui título executivo extrajudicial nos termos do art. 784, inciso III, do Código de Processo Civil.</p>';
   h+='<p style="text-align:center"><strong>Vila Velha/ES, '+diaStr+' de '+mesStr+' de '+anoStr+'.</strong></p>';
 
-  // Assinaturas — Locadores
+  // Assinaturas — Locadores (lado a lado)
   h+='<p style="text-align:center;margin-top:32px;margin-bottom:8px"><strong>LOCADORES</strong></p>';
   h+='<div class="assinaturas">';
   locadores.forEach(function(l){
-    h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 6px"></div><strong>'+l.nome+'</strong><br><small>CPF: '+l.cpf+'</small><br><small>Locador'+(l.nome&&l.nome.indexOf('Luciene')>=0?'a':'')+'</small></div>';
+    var isLuciene=l.nome&&l.nome.indexOf('Luciene')>=0;
+    var qualLoc=isLuciene?'Locadora':'Locador';
+    h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 4px"></div><strong>'+l.nome+'</strong> — CPF: '+l.cpf+'<br><small>'+qualLoc+'</small></div>';
   });
   h+='</div>';
 
-  // Assinatura — Locatário(a)
-  h+='<p style="text-align:center;margin-top:24px;margin-bottom:8px"><strong>'+loc_t.toUpperCase()+(txtLct2?'S':'')+'</strong></p>';
+  // Assinatura — Locatário(s) (linha separada, lado a lado se mais de um)
+  h+='<p style="text-align:center;margin-top:28px;margin-bottom:8px"><strong>'+loc_t.toUpperCase()+(txtLct2?'S':'')+'</strong></p>';
   h+='<div class="assinaturas">';
-  h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 6px"></div><strong>'+(lct1.nome||'___________________________')+'</strong><br><small>CPF: '+(lct1.cpf||'___')+'</small><br><small>'+loc_t+'</small></div>';
-  if(txtLct2)h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 6px"></div><strong>'+(lct2&&lct2.nome||'___')+'</strong><br><small>CPF: '+(lct2&&lct2.cpf||'___')+'</small><br><small>'+loc_t+' 2</small></div>';
+  h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 4px"></div><strong>'+(lct1.nome||'___________________________')+'</strong> — CPF: '+(lct1.cpf||'___')+'<br><small>'+loc_t+'</small></div>';
+  if(txtLct2)h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 4px"></div><strong>'+(lct2&&lct2.nome||'___')+'</strong> — CPF: '+(lct2&&lct2.cpf||'___')+'<br><small>'+loc_t+' 2</small></div>';
   h+='</div>';
 
-  // Assinaturas — Testemunhas
-  h+='<p style="text-align:center;margin-top:24px;margin-bottom:8px"><strong>TESTEMUNHAS</strong></p>';
+  // Assinaturas — Testemunhas (sempre duas, lado a lado)
+  h+='<p style="text-align:center;margin-top:28px;margin-bottom:8px"><strong>TESTEMUNHAS</strong></p>';
   h+='<div class="assinaturas" style="justify-content:center;gap:80px">';
-  h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 6px"></div><strong>'+(test1.nome||'___________________________')+'</strong><br><small>CPF: '+(test1.cpf||'___')+'</small><br><small>Testemunha 1</small></div>';
-  h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 6px"></div><strong>'+(test2.nome||'___________________________')+'</strong><br><small>CPF: '+(test2.cpf||'___')+'</small><br><small>Testemunha 2</small></div>';
+  h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 4px"></div><strong>'+(test1.nome||'___________________________')+'</strong> — CPF: '+(test1.cpf||'___')+'<br><small>Testemunha 1</small></div>';
+  h+='<div class="ass"><div style="border-top:1px solid #000;width:200px;margin:0 auto 4px"></div><strong>'+(test2.nome||'___________________________')+'</strong> — CPF: '+(test2.cpf||'___')+'<br><small>Testemunha 2</small></div>';
   h+='</div>';
 
   // Rodapé
