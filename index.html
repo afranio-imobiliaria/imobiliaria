@@ -34868,18 +34868,17 @@ function montarContrato(d){
 
   // Gênero
   const genero=d.genero||'F';
-  const lct2raw=d.lct2||null;
-  const lct2=lct2raw&&lct2raw.nome&&lct2raw.nome.trim()?lct2raw:null;
+  const lct2=(d.lct2&&d.lct2.nome&&d.lct2.nome.trim())?d.lct2:null;
   const loc_t=genero==='M'?'Locatário':'Locatária';
-  const loc_ts=d.lct2?'Locatários':loc_t;
-  const loc_Ts=d.lct2?'Os Locatários':(genero==='M'?'O Locatário':'A Locatária');
-  const os_as=d.lct2?'os':(genero==='M'?'o':'a');
+  const loc_ts=lct2?'Locatários':loc_t;
+  const loc_Ts=lct2?'Os Locatários':(genero==='M'?'O Locatário':'A Locatária');
+  const os_as=lct2?'os':(genero==='M'?'o':'a');
   const art=genero==='M'?'o':'a';
   const Art=genero==='M'?'O':'A';
   const ao_a=genero==='M'?'ao':'à';
   const do_a=genero==='M'?'do':'da';
   const pelo_a=genero==='M'?'pelo':'pela';
-  const conj=(s,p)=>d.lct2?p:s;
+  const conj=(s,p)=>lct2?p:s;
 
   // Dados básicos
   const im=d.imovel||{};
