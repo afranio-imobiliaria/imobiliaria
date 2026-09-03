@@ -35298,45 +35298,109 @@ async function gerarDocx(d){
     ps.push(par((loc_t+' 2').toUpperCase(),false,true));
     ps.push(par(txtLct2D+'.'));
   }
+  // CLÁUSULA SEGUNDA
   ps.push(tit('CLÁUSULA SEGUNDA — DO OBJETO E DA FINALIDADE DA LOCAÇÃO'));
-  ps.push(par('O Locador cede em locação '+ao_a+' '+loc_t+' o '+im.tipo+' n.º '+im.numero+' ('+im.posicao+'), com as seguintes características: '+caract+', localizado na '+endImovel+'. Finalidade: O imóvel destina-se exclusivamente para uso '+(im.finalidade||'residencial')+'.'));
-  ps.push(tit('CLÁUSULA TERCEIRA — DO PRAZO DA LOCAÇÃO, DO VALOR DO ALUGUEL, DOS ENCARGOS, DOS PAGAMENTOS, DA RENOVAÇÃO, DAS MULTAS E DA GARANTIA CONTRATUAL'));
-  ps.push(par('1. Do Prazo da Locação — O contrato terá duração de 12 (doze) meses, com início em '+fmtDt(d.dataIni)+' e término em '+fmtDt(d.dataFim)+'. Fica expressamente vedada qualquer alegação de prazo de 6 (seis) meses. Caso haja interesse de ambas as partes, o contrato poderá ser renovado até completar 36 (trinta e seis) meses.'));
-  ps.push(par('2. Do Valor do Aluguel — O aluguel mensal é de '+fmtM(d.aluguel)+', na modalidade "mora-se para pagar".'));
-  var pctNomesD={'pct70':'70% (setenta por cento)','pct60':'60% (sessenta por cento)','pct50':'50% (cinquenta por cento)','pct40':'40% (quarenta por cento)','pct30':'30% (trinta por cento)'};
-  var edpTextoD=d.edp==='nome_locatario'?'A conta de energia elétrica deverá ser transferida para o nome '+do_a+' '+loc_t+' em até 05 (cinco) dias a partir da assinatura deste contrato, sob pena de rescisão contratual.':'A conta de energia elétrica não poderá ser transferida, sendo de responsabilidade '+do_a+' '+loc_t+' o pagamento de '+(pctNomesD[d.edp]||'___')+' do valor da conta, devendo ser efetuado até o vencimento, sob pena de rescisão contratual.';
-  ps.push(par('3. Dos Encargos e Taxas — IPTU: Permanecerá em nome do Locador, devendo ser pago '+pelo_a+' '+loc_t+' antes do vencimento, sob pena de rescisão contratual. Água: A conta de água permanecerá em nome do Locador'+(d.cesan?' (matrícula CESAN n.º '+d.cesan+')':'')+' e será rateada, cabendo '+ao_a+' '+loc_t+' o pagamento de '+(d.cotas||'___')+' cotas de um total de '+(d.cotasTotal||'___')+' cotas. Energia: '+edpTextoD+(d.gas==='individual'?' Gás: O fornecimento de gás é individual e de responsabilidade exclusiva '+do_a+' '+loc_t+', devendo arcar com a aquisição, substituição do botijão e todos os custos decorrentes de seu consumo.':d.gas==='rateado'?' Gás: O fornecimento de gás será rateado entre as unidades do edifício.':'')));
-  ps.push(par('4. Dos Pagamentos — O pagamento deverá ser realizado até o dia 05 (cinco) de cada mês, podendo ser efetuado até o 10.º (décimo) dia. Favorecido: '+(d.pixFavor||'___')+'   Chave PIX: '+(d.pixChave||'___')));
-  ps.push(par('5. Da Renovação — A renovação contratual deverá ser comunicada com 60 (sessenta) dias de antecedência, com reajuste pelo índice IGP-M ou conforme o valor de mercado, a critério do Locador.'));
-  ps.push(par('6. Das Multas — Caso o pagamento não seja efetuado dentro do prazo, será aplicada multa de 10% (dez por cento) sobre o valor do aluguel, acrescida de juros de 1% (um por cento) ao mês e correção monetária pelo IPCA pro rata die.'));
-  if(parseFloat(d.caucao)>0)ps.push(par('7. Da Garantia Contratual — Caução — Os contratantes acordaram que será cobrada, como garantia contratual, a modalidade de CAUÇÃO no valor de '+fmtM(d.caucao)+'. A caução será devolvida ao final do encerramento contratual, somente após: (i) vistoria final do imóvel; (ii) entrega das chaves; e (iii) comprovação do pagamento de todas as despesas pendentes, em até 30 (trinta) dias.'));
+  ps.push(par('O Locador cede em locação '+ao_a+' '+loc_t+' o '+(im.tipo||'Imóvel')+' n.\u00ba '+(im.numero||'___')+' ('+(im.posicao||'___')+'), com as seguintes características: '+caract+', localizado na '+endImovel+'. Finalidade: O imóvel destina-se exclusivamente para uso '+(im.finalidade||'residencial')+'.'));
+
+  // CLÁUSULA TERCEIRA
+  ps.push(tit('CLÁUSULA TERCEIRA — DO PRAZO, DO ALUGUEL, DOS ENCARGOS, DOS PAGAMENTOS, DA RENOVAÇÃO, DAS MULTAS E DA GARANTIA'));
+  ps.push(par('1. Do Prazo — O contrato terá duração de 12 (doze) meses, com início em '+fmtDt(d.dataIni)+' e término em '+fmtDt(d.dataFim)+'.'));
+  ps.push(par('2. Do Valor do Aluguel — '+fmtM(d.aluguel)+', na modalidade "mora-se para pagar".'));
+  ps.push(par('3. Do Condomínio — '+(d.cond?'R$ '+(d.condVal||'___')+' mensais, devendo ser pago até o vencimento.':'Não há condomínio.')));
+  ps.push(par('4. Do IPTU e Taxa de Lixo — Permanecerão em nome do Locador, devendo ser pagos '+pelo_a+' '+loc_t+' antes do vencimento, sob pena de rescisão, nos termos do art. 23, VIII da Lei n.\u00ba 8.245/1991.'));
+  // Água
+  var aguaTipoD=d.aguaTipo||'individual';
+  if(aguaTipoD==='individual') ps.push(par('5. Da Água — Fornecimento individualizado'+(d.cesan?', matrícula CESAN n.\u00ba '+d.cesan:'')+'. '+Art+' '+loc_t+' é responsável pelo pagamento direto à CESAN conforme consumo.'));
+  else if(aguaTipoD==='condominio') ps.push(par('5. Da Água — Inclusa no condomínio, não há conta individualizada de água.'));
+  else ps.push(par('5. Da Água — Conta em nome do Locador'+(d.cesan?', CESAN n.\u00ba '+d.cesan:'')+'. '+Art+' '+loc_t+' paga diretamente ao representante até o vencimento.'));
+  // Gás
+  var gasD=d.gas||'';
+  if(gasD==='botijao') ps.push(par('5.1 Do Gás — Botijão (GLP), de exclusiva responsabilidade '+do_a+' '+loc_t+'.'));
+  else if(gasD==='individual') ps.push(par('5.1 Do Gás — Encanado individual, medidor em nome '+do_a+' '+loc_t+', paga direto à concessionária conforme consumo.'));
+  else if(gasD==='condominio') ps.push(par('5.1 Do Gás — Encanado rateado, incluso na taxa condominial mensal.'));
+  // Energia
+  var pctNomesD={'pct70':'70%','pct60':'60%','pct50':'50%','pct40':'40%','pct30':'30%'};
+  var edpTextoD='';
+  if(d.edp==='nome_locatario') edpTextoD='A conta de energia elétrica'+(d.edpInst?' (n.\u00ba instalação '+d.edpInst+')':'')+' deverá ser transferida para o nome '+do_a+' '+loc_t+' em até 05 (cinco) dias da assinatura, sob pena de rescisão.';
+  else if(d.edp==='pj_locador') edpTextoD='A conta de energia permanece em nome do Locador, devendo '+art+' '+loc_t+' efetuar o pagamento ao representante até o vencimento.';
+  else edpTextoD='A conta de energia'+(d.edpInst?' (n.\u00ba instalação '+d.edpInst+')':'')+' não será transferida; '+art+' '+loc_t+' paga '+(pctNomesD[d.edp]||'___')+' do valor até o vencimento.';
+  ps.push(par('6. Da Energia Elétrica — '+edpTextoD));
+  // Pagamentos
+  var quemPagaAlugD=d.pixQuemPaga==='locador'?'Locador':loc_t;
+  ps.push(par('7. Dos Pagamentos — Aluguel até o dia 05, podendo ser pago até o dia 10. Favorecido: '+(d.pixFavor||'___')+'  PIX/Depósito: '+(d.pixChave||'___')+'  Quem paga: '+quemPagaAlugD+(d.cond&&d.condPixFavor?'  |  Condomínio — Favorecido: '+d.condPixFavor+'  PIX: '+(d.condPixChave||'___'):'')+(d.pgtoExtra?'  Obs: '+d.pgtoExtra:'')+'.'));
+  ps.push(par('8. Da Renovação e do Reajuste — Comunicar com 60 (sessenta) dias de antecedência. Reajuste pelo IGP-M ou valor de mercado, nos termos do art. 18 da Lei n.\u00ba 8.245/1991.'));
+  ps.push(par('9. Da Multa por Atraso — Multa moratória de 10% (dez por cento) sobre o valor devido (art. 408 do CC), acrescida de juros de 1% ao mês (art. 406 do CC) e correção pelo IPCA/IBGE pro rata die.'));
+  if(parseFloat(d.caucao)>0) ps.push(par('10. Da Garantia — Caução de '+fmtM(d.caucao)+'. Devolvida após vistoria final, entrega das chaves e quitação de todas as despesas, em até 30 dias. Em caso de quebra contratual, poderá ser retida para quitação de débitos.'));
+
+  // CLÁUSULA QUARTA — Imobiliária (condicional)
   if(d.imob){
-    ps.push(tit('CLÁUSULA QUARTA — DO PAGAMENTO DA IMOBILIÁRIA E DOS SERVIÇOS DA IMOBILIÁRIA'));
-    ps.push(par('A imobiliária '+d.imobNome+' foi contratada pelos Locadores exclusivamente para intermediar e elaborar o presente instrumento, recebendo valor equivalente ao primeiro mês de aluguel via PIX, chave '+d.imobPix+'.'));
-    ps.push(par('Parágrafo Primeiro — Do Aditamento Contratual: Em caso de renovação intermediada pela imobiliária, será devida taxa de aditamento no valor de '+fmtM(d.imobAdit)+'.'));
-    ps.push(par('Parágrafo Segundo — Da Taxa de Encerramento: Em caso de encerramento sem renovação, será devida taxa de encerramento no valor de '+fmtM(d.imobEnc)+'.'));
+    ps.push(tit('CLÁUSULA QUARTA — DA INTERMEDIAÇÃO, DA ADMINISTRAÇÃO E DOS SERVIÇOS DA IMOBILIÁRIA'));
+    ps.push(par('A imobiliária '+d.imobNome+' foi contratada para intermediar este contrato, recebendo valor equivalente ao primeiro mês de aluguel via PIX, chave '+d.imobPix+', nos termos do art. 653 do Código Civil.'));
+    if(d.admAtiva){
+      var admQuemTxtD=d.admQuem==='locatario'?loc_t:'Locador';
+      ps.push(par('Parágrafo Primeiro — Da Administração Mensal: Taxa de 10% sobre o aluguel, paga pel'+art+' '+admQuemTxtD+' via PIX '+(d.admPix||d.imobPix)+', favorecido '+(d.admFavor||d.imobNome)+'.'));
+    }
+    ps.push(par((d.admAtiva?'Parágrafo Segundo':'Parágrafo Primeiro')+' — Dos Vícios: A imobiliária não responde por vícios, defeitos aparentes, ocultos ou estruturais do imóvel, a serem resolvidos diretamente entre Locadores e '+loc_t+', nos termos dos arts. 22 e 23 da Lei n.\u00ba 8.245/1991.'));
+    ps.push(par((d.admAtiva?'Parágrafo Terceiro':'Parágrafo Segundo')+' — Do Aditamento: Taxa de '+fmtM(d.imobAdit)+' em caso de renovação intermediada.'));
+    ps.push(par((d.admAtiva?'Parágrafo Quarto':'Parágrafo Terceiro')+' — Do Encerramento: Taxa de '+fmtM(d.imobEnc)+' em caso de encerramento sem renovação.'));
   }
-  ps.push(tit('CLÁUSULA '+cn('QUARTA')+' — DA VISTORIA DO IMÓVEL, DAS BENFEITORIAS, DA PINTURA E DAS OBRIGAÇÕES '+do_a.toUpperCase()+' '+loc_t.toUpperCase()));
-  ps.push(par('O Locador declara que o imóvel encontra-se em perfeito estado de conservação. '+Art+' '+loc_t+' declara ter realizado a vistoria do imóvel e aceitou proceder a esta locação no estado em que o imóvel se encontra.'));
-  ps.push(par('Chaves entregues: '+(d.chaves||'___')+'. Animais de estimação: '+(d.animais?'Fica expressamente autorizada a permanência de 01 (um) animal doméstico de pequeno porte no imóvel.':'Não é permitida a presença de animais de estimação dentro do imóvel, sob pena de rescisão contratual.')));
-  ps.push(tit('CLÁUSULA '+cn('QUINTA')+' — DO ACORDO EXTRAJUDICIAL ENTRE '+loc_t.toUpperCase()+' E LOCADORES'));
-  ps.push(par('Este contrato é personalíssimo, firmado exclusivamente entre Locadores e '+loc_t+'. Não será permitido morar ou permanecer no imóvel outras pessoas além d'+art+' '+loc_t+' que assinou este instrumento.'));
-  ps.push(par('Parágrafo Primeiro — Da Rescisão: '+Art+' '+loc_t+' deverá: I — comunicar os Locadores com 60 (sessenta) dias de antecedência; II — proceder à vistoria do imóvel; III — quitar todas as despesas. Parágrafo Segundo — Do Reconhecimento de Firma: É de total responsabilidade d'+art+' '+loc_t+' o reconhecimento de firma deste contrato. Parágrafo Terceiro — Da Boa Convivência: '+Art+' '+loc_t+' compromete-se a cooperar para a manutenção da boa vizinhança. Parágrafo Quarto — Da Legislação Penal: É expressamente proibido utilizar o imóvel para qualquer atividade tipificada como crime nos termos do art. 33 da Lei n.º 11.343/2006.'));
-  ps.push(par('Parágrafo Quinto — Da Mudança e do Encerramento Contratual: É expressamente vedado '+ao_a+' '+loc_t+' realizar a mudança ou retirar seus pertences do imóvel sem antes comparecer ao escritório da Imobiliária Afrânio Melo, situado na Rua São Luís, n.º 25, Bairro Jóquei de Itaparica, Vila Velha/ES, para formalizar o encerramento contratual e quitar integralmente todas as dívidas decorrentes deste contrato, incluindo aluguéis, encargos, taxas e despesas em aberto. O descumprimento desta obrigação sujeitará '+ao_a+' '+loc_t+' às penalidades previstas neste instrumento, sem prejuízo das medidas judiciais cabíveis. Adicionalmente, a mudança somente poderá ser realizada de segunda-feira a sexta-feira, em horário comercial, ou aos sábados até as 12h00 (meio-dia), devendo '+art+' '+loc_t+' comunicar o síndico do edifício com antecedência mínima de 01 (uma) semana, sob pena de rescisão contratual e aplicação das multas previstas neste instrumento.'));
-  ps.push(tit('CLÁUSULA '+cn('SEXTA')+' — DA CLÁUSULA PENAL, DO TÍTULO EXECUTIVO, DAS MULTAS CONTRATUAIS, DA RETENÇÃO, DA RESERVA, DA DESISTÊNCIA E DA VALIDADE DAS NOTIFICAÇÕES'));
-  ps.push(par('Parágrafo Primeiro — Da Cláusula Penal e do Título Executivo: Este contrato constitui título executivo extrajudicial e judicial, nos termos do art. 784, III, do CPC. '+Art+' '+loc_t+' responderá pelos honorários advocatícios de 20% (vinte por cento) sobre o valor da causa.'));
-  ps.push(par('Parágrafo Segundo — Das Multas Contratuais: Caso '+art+' '+loc_t+' quebre este contrato, será cobrada multa contratual no valor equivalente a 03 (três) aluguéis, proporcional ao tempo restante. Caso o inadimplemento seja imputado ao Locador, este deverá pagar multa equivalente a 03 (três) aluguéis.'));
-  ps.push(par('Parágrafo Terceiro — Da Retenção e dos Valores Pagos como Caução: Em caso de quebra contratual, o valor pago como garantia contratual poderá ser retido pelos Locadores.'));
-  ps.push(par('Parágrafo Quarto — Da Reserva do Imóvel: Caso os candidatos realizem a reserva do imóvel, deverão pagar sinal'+(parseFloat((d.reserva&&d.reserva.val)||0)>0?' no valor de '+fmtM(d.reserva.val):'')+', a título de arras confirmatórias, nos termos dos arts. 417 a 420 do Código Civil. O valor pago a título de reserva não será devolvido em caso de desistência. Se os candidatos não concluírem a assinatura e o pagamento em 02 (dois) dias corridos, perderão integralmente o valor pago.'));
-  ps.push(par('Parágrafo Quinto — Da Desistência Após a Assinatura: Caso '+art+' '+loc_t+' desista após a assinatura do contrato, fará jus à devolução de apenas 40% (quarenta por cento) dos valores pagos, retendo os Locadores os demais 60% (sessenta por cento).'));
-  ps.push(par('Parágrafo Sexto — Da Validade das Notificações: Todas as notificações serão consideradas válidas quando enviadas por qualquer meio que garanta ciência inequívoca — e-mail, WhatsApp, carta registrada ou notificação assinada. Na 3.ª (terceira) infração, os Locadores poderão exigir a desocupação do imóvel no prazo de 30 (trinta) dias.'));
-  ps.push(par('Parágrafo Sétimo — Da Correção Monetária: Em caso de inadimplência, todos os valores em aberto serão corrigidos pelo IPCA pro rata die, acrescidos de multa de 10% e juros de 1% ao mês.'));
-  ps.push(tit('CLÁUSULA '+cn('SÉTIMA')+' — DAS REGRAS GERAIS, DA PROCURAÇÃO, DO MANDATO E DA PROTEÇÃO DE DADOS — LEI N.º 13.709/2018'));
-  ps.push(par('Os serviços de imobiliária, corretores e escritório de advocacia foram contratados pelos Locadores exclusivamente para intermediar e elaborar o presente instrumento. Com a assinatura e o reconhecimento de firma, encerram-se integralmente os serviços e a responsabilidade jurídica.'));
-  ps.push(par('Parágrafo Primeiro — Da Procuração e do Mandato: Os Locadores nomeiam como procurador e administrador '+proc.nome+', CPF n.º '+proc.cpf+', RG n.º '+proc.rg+', outorgando-lhe poderes para atuar perante a EDP, a CESAN e demais órgãos públicos.'));
-  ps.push(par('Parágrafo Segundo — Da Proteção de Dados — LGPD: As partes consentem livre e inequivocamente com o tratamento de seus dados pessoais para fins exclusivos de execução deste contrato (art. 7.º, I da Lei n.º 13.709/2018).'));
-  ps.push(tit('CLÁUSULA '+cn('OITAVA')+' — DO FORO E DOS MEIOS DE SOLUÇÃO DE CONFLITO'));
-  ps.push(par('Estando as partes contratantes de acordo com todos os termos deste contrato de locação, elegem o foro de Vila Velha, Estado do Espírito Santo, para dirimir eventuais controvérsias. Em caso de litígios, comprometem-se a buscar, primeiramente, conciliação e mediação. As comunicações poderão ser feitas por e-mail, mensagem criptografada ou notificação escrita. Não obtido o acordo em até 10 (dez) dias, poderá a parte interessada promover a ação judicial cabível. Aplicam-se à relação contratual as Leis n.º 9.099/1995, n.º 9.307/1996, n.º 10.406/2002, n.º 13.140/2015 e o Código de Processo Civil.'));
+
+  // CLÁUSULA QUINTA — Vistoria
+  var vstD=d.vistoria||{};
+  var laudoComD='';
+  if(vstD.sala) laudoComD+='Sala: '+vstD.sala+'. ';
+  if(vstD.cozinha) laudoComD+='Cozinha: '+vstD.cozinha+'. ';
+  if(vstD.servico) laudoComD+='Área de serviço: '+vstD.servico+'. ';
+  if(vstD.banho) laudoComD+='Banheiro social: '+vstD.banho+'. ';
+  if(vstD.quarto1) laudoComD+='Quarto 1: '+vstD.quarto1+'. ';
+  if(vstD.quarto2) laudoComD+='Quarto 2: '+vstD.quarto2+'. ';
+  if(vstD.quarto3) laudoComD+='Quarto 3: '+vstD.quarto3+'. ';
+  if(vstD.suite) laudoComD+='Suíte: '+vstD.suite+'. ';
+  if(vstD.varanda) laudoComD+='Varanda: '+vstD.varanda+'. ';
+  ps.push(tit('CLÁUSULA '+cn('QUINTA')+' — DA VISTORIA, DAS BENFEITORIAS E DAS OBRIGAÇÕES '+do_a.toUpperCase()+' '+loc_t.toUpperCase()));
+  ps.push(par('O Locador declara que o imóvel encontra-se em perfeito estado de conservação e pronto para ser habitado. '+Art+' '+loc_t+' declara ter realizado a vistoria e aceito proceder a esta locação no estado em que se encontra.'));
+  if(laudoComD) ps.push(par('Laudo de vistoria por cômodo: '+laudoComD));
+  ps.push(par('1. Da Pintura — O imóvel foi entregue com pintura nova'+(d.tintaMarca?', tinta '+d.tintaMarca:'')+', cor(es): '+(d.tintaCor||'branco gelo')+'. Fica reservado ao Locador, ao final do contrato, refazer a pintura com profissional de sua confiança.'));
+  ps.push(par('2. Das Proibições — Fica expressamente proibido: (I) executar obras, reformas ou mudanças na pintura sem autorização escrita dos Locadores (art. 23, VI da Lei n.\u00ba 8.245/1991); (II) perfurar azulejos sem autorização; (III) sublocar ou ceder o imóvel sem autorização.'));
+  var temVagaWordD=d.imovel&&d.imovel.vaga==='com_vaga';
+  var vagaLocalWordD=d.imovel&&d.imovel.vagaLocal==='subsolo'?'subsolo':d.imovel&&d.imovel.vagaLocal==='terreo'?'térreo':'conforme descrito';
+  if(temVagaWordD) ps.push(par('3. Da Garagem — Vaga demarcada no '+vagaLocalWordD+(d.imovel&&d.imovel.vagaDescLivre?': '+d.imovel.vagaDescLivre:'')+'. Entregues: '+(d.controles||'—')+' controle(s) e '+(d.chaves||'—')+'. Uso exclusivo '+do_a+' '+loc_t+'.'));
+  else ps.push(par('3. Da Garagem — O imóvel não possui vaga de garagem. Entregues: '+(d.chaves||'—')+(d.controles?' e '+d.controles:'')+'.'));
+  ps.push(par('4. Dos Animais — '+(d.animais?'Autorizada a permanência de 01 (um) animal doméstico de pequeno porte, sob responsabilidade '+do_a+' '+loc_t+', mantendo higiene nas áreas comuns.':'Não é permitida a presença de animais, sob pena de rescisão.')));
+  ps.push(par('5. Das Obrigações — Nos termos do art. 23 da Lei n.\u00ba 8.245/1991: a) conservar e devolver o imóvel nas mesmas condições; b) comunicar defeitos imediatamente; c) respeitar o regimento do condomínio; d) permitir vistorias com aviso de 48h; e) não hospedar terceiros por mais de 30 dias sem comunicar à Imobiliária; f) seguro incêndio: responsabilidade d'+art+' '+(d.seguro==='locador'?'Locador':loc_t)+'.'));
+
+  // CLÁUSULA SEXTA — Rescisão
+  var prazoSindD=d.prazoSindico||'7';
+  var mudSabadoD=d.mudancaSabado!==false;
+  ps.push(tit('CLÁUSULA '+cn('SEXTA')+' — DA RESCISÃO, DA DESOCUPAÇÃO E DO ENCERRAMENTO'));
+  ps.push(par('1. Da Rescisão — '+Art+' '+loc_t+' deverá: I — comunicar com 60 (sessenta) dias de antecedência; II — permitir vistoria final; III — quitar todos os encargos (art. 4.\u00ba e 6.\u00ba da Lei n.\u00ba 8.245/1991).'));
+  ps.push(par('2. Da Mudança — Somente de segunda a sexta em horário comercial'+(mudSabadoD?', ou aos sábados até 12h00':'')+', com aviso ao síndico com '+prazoSindD+' dias de antecedência (art. 23, III da Lei n.\u00ba 8.245/1991). A retirada de pertences sem quitação e vistoria sujeita às penalidades contratuais.'));
+  ps.push(par('3. Do Reconhecimento de Firma — '+Art+' '+loc_t+' deverá reconhecer firma e entregar a via na Imobiliária antes da mudança. Este contrato constitui título executivo extrajudicial (art. 784, III, CPC).'));
+  ps.push(par('4. Da Boa Convivência — Respeitar a legislação vigente e o regimento interno do edifício (art. 1.277 do CC e Decreto-Lei n.\u00ba 3.688/1941).'));
+  ps.push(par('5. Do Uso Ilícito — É vedado utilizar o imóvel para atividades ilícitas (art. 23, II da Lei n.\u00ba 8.245/1991 e art. 33 da Lei n.\u00ba 11.343/2006).'));
+
+  // CLÁUSULA SÉTIMA — Penal
+  ps.push(tit('CLÁUSULA '+cn('SÉTIMA')+' — DA CLÁUSULA PENAL, DO TÍTULO EXECUTIVO E DA DESISTÊNCIA'));
+  ps.push(par('1. Do Título Executivo — Este contrato constitui título executivo extrajudicial (art. 784, III, CPC). A parte inadimplente pagará honorários advocatícios de 20% sobre o valor da causa.'));
+  ps.push(par('2. Da Multa por Quebra Contratual — Multa de 03 (três) aluguéis, proporcional ao tempo restante, aplicável a ambas as partes (art. 4.\u00ba da Lei n.\u00ba 8.245/1991).'));
+  ps.push(par('3. Da Caução em Inadimplemento — Em caso de quebra contratual '+pelo_a+' '+loc_t+', a caução poderá ser retida para quitação de débitos.'));
+  ps.push(par('4. Das Notificações — Válidas por e-mail, WhatsApp, carta registrada ou notificação escrita, consideradas recebidas em até 48 horas (art. 26 da Lei n.\u00ba 8.245/1991). Endereço para citações: '+(d.lct1&&d.lct1.endnot||'___')+'.'));
+  ps.push(par('5. Da Desistência Antes da Assinatura — Após pagamento e entrega de documentos, se a assinatura não ocorrer em 02 dias corridos, serão devolvidos apenas 40% dos valores pagos (arts. 417 a 420 do CC).'));
+  ps.push(par('6. Da Desistência Após a Assinatura — Implica perda integral dos valores pagos (arts. 418 e 389 do CC).'));
+
+  // CLÁUSULA OITAVA — Mandato, Venda, Preferência e LGPD
+  ps.push(tit('CLÁUSULA '+cn('OITAVA')+' — DO MANDATO, DA VENDA, DO DIREITO DE PREFERÊNCIA E DA LGPD'));
+  ps.push(par('Parágrafo Primeiro — Do Mandato — Os Locadores nomeiam como procurador '+(proc.nome||'___')+', CPF n.\u00ba '+(proc.cpf||'___')+', RG n.\u00ba '+(proc.rg||'___')+', com poderes perante EDP, CESAN e demais órgãos'+(proc.poderes?': '+proc.poderes:'')+' (arts. 653 a 692 do CC).'));
+  ps.push(par('Parágrafo Segundo — Das Comunicações — Válidas por e-mail, WhatsApp, carta registrada ou notificação escrita, em até 48 horas (art. 26 da Lei n.\u00ba 8.245/1991).'));
+  ps.push(par('Parágrafo Terceiro — Do Despejo por Infração — Na 3.\u00aa (terceira) infração contratual, os Locadores poderão exigir desocupação em 30 dias (art. 9.\u00ba, II da Lei n.\u00ba 8.245/1991).'));
+  if(d.aVenda) ps.push(par('Parágrafo Quarto — Da Venda — O imóvel está à venda. A Imobiliária Afrânio Melo (CRECI 8857F) tem exclusividade na intermediação, fazendo jus a '+(d.comissao||'6')+'% sobre o valor da venda (art. 722 do CC).'));
+  ps.push(par('Parágrafo '+(d.aVenda?'Quinto':'Quarto')+' — Do Direito de Preferência — '+Art+' '+loc_t+' tem direito de preferência na compra, devendo manifestar interesse em até 30 dias após notificação (arts. 27, 28 e 29 da Lei n.\u00ba 8.245/1991).'));
+  ps.push(par('Parágrafo '+(d.aVenda?'Sexto':'Quinto')+' — Da LGPD — As partes consentem com o tratamento de dados pessoais para fins de execução deste contrato (art. 7.\u00ba, I da Lei n.\u00ba 13.709/2018), garantidos os direitos dos arts. 17 a 22 da mesma lei.'));
+  ps.push(par('Parágrafo '+(d.aVenda?'Sétimo':'Sexto')+' — Das Chaves — '+Art+' '+loc_t+' declara ter recebido '+(d.chaves||'___')+(d.controles?' e '+d.controles:'')+', em perfeito estado. A devolução é condição para o encerramento contratual.'));
+
+  // CLÁUSULA NONA — Foro
+  ps.push(tit('CLÁUSULA '+cn('NONA')+' — DAS RESOLUÇÕES E DOS CONFLITOS'));
+  ps.push(par('Fica eleito o foro da Comarca de Vila Velha/ES para dirimir quaisquer litígios. As partes comprometem-se a buscar conciliação ou mediação em até 10 (dez) dias antes de recorrer ao Judiciário. Aplicam-se as Leis n.\u00ba 8.245/1991, n.\u00ba 10.406/2002, n.\u00ba 13.105/2015 e demais normas pertinentes.'));
   ps.push(esp());
   ps.push(new Paragraph({children:[new TextRun({text:'CIÊNCIA, ACEITE E DECLARAÇÃO DAS PARTES',bold:true,size:24,font:'Arial'})],alignment:AlignmentType.CENTER,spacing:{after:100}}));
   ps.push(par('As partes declaram: I — Ter procedido à leitura integral deste instrumento; II — Que todos os dados pessoais informados estão em conformidade com os documentos originais; III — Este instrumento é firmado em 02 (duas) vias de igual teor e forma; IV — Este contrato constitui título executivo extrajudicial nos termos do art. 784, inciso III, do Código de Processo Civil.'));
