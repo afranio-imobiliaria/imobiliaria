@@ -35269,7 +35269,7 @@ async function gerarDocx(d){
   const fmtDt=s=>{if(!s)return'_______________';const[y,m,dd]=s.split('-');return dd+' de '+MESES[parseInt(m)-1]+' de '+y;};
   let diaStr='___',mesStr='___',anoStr='___';
   if(d.dataAssin){const[y,m,dd]=d.dataAssin.split('-');diaStr=dd;mesStr=MESES[parseInt(m)-1];anoStr=y;}
-  const lct1=d.lct1||{};const lct2=d.lct2||null;const im=d.imovel||{};const locadores=d.locadores||[];
+  const lct1=d.lct1||{};const lct2=(d.lct2&&d.lct2.nome&&d.lct2.nome.trim())?d.lct2:null;const im=d.imovel||{};const locadores=d.locadores||[];
   const proc=d.proc||{nome:'',cpf:'',rg:''};const test1=d.test1||{nome:'',cpf:''};const test2=d.test2||{nome:'',cpf:''};
   const txtLct1=[lct1.nome,lct1.nac,lct1.prof,lct1.ec,lct1.cpf?'CPF n.º '+lct1.cpf:'',lct1.rg?'RG n.º '+lct1.rg:'',lct1.email?'e-mail '+lct1.email:'',lct1.tel?'telefone '+lct1.tel:''].filter(Boolean).join(', ');
   var caract='sala';
@@ -35293,6 +35293,11 @@ async function gerarDocx(d){
   ps.push(par(locadores.map(l=>{const semRG=l.nome&&l.nome.includes('Gabriel');return l.nome+', '+l.qual+', CPF n.º '+l.cpf+(semRG?'':(l.rg&&l.rg!=='_______________'?', RG n.º '+l.rg:''));}).join(', e ')+', com endereço na Rua São Luís, número 25, Lojas 1 e 2, Bairro Jóquei de Itaparica, Vila Velha/ES, CEP 29.103-890.'));
   ps.push(par(loc_t.toUpperCase(),false,true));
   ps.push(par(txtLct1+'.'));
+  if(lct2&&lct2.nome){
+    var txtLct2D=[lct2.nome,lct2.nac,lct2.prof,lct2.ec,lct2.cpf?'CPF n.\u00ba '+lct2.cpf:'',lct2.rg?'RG n.\u00ba '+lct2.rg:''].filter(Boolean).join(', ');
+    ps.push(par((loc_t+' 2').toUpperCase(),false,true));
+    ps.push(par(txtLct2D+'.'));
+  }
   ps.push(tit('CLÁUSULA SEGUNDA — DO OBJETO E DA FINALIDADE DA LOCAÇÃO'));
   ps.push(par('O Locador cede em locação '+ao_a+' '+loc_t+' o '+im.tipo+' n.º '+im.numero+' ('+im.posicao+'), com as seguintes características: '+caract+', localizado na '+endImovel+'. Finalidade: O imóvel destina-se exclusivamente para uso '+(im.finalidade||'residencial')+'.'));
   ps.push(tit('CLÁUSULA TERCEIRA — DO PRAZO DA LOCAÇÃO, DO VALOR DO ALUGUEL, DOS ENCARGOS, DOS PAGAMENTOS, DA RENOVAÇÃO, DAS MULTAS E DA GARANTIA CONTRATUAL'));
@@ -35549,11 +35554,61 @@ function atualizarTituloLct(pref,genero){
 // ══════════════════════════════════════════════
 // STORAGE
 // ══════════════════════════════════════════════
+// DB — usa window.storage (compartilhado entre computadores) com fallback para localStorage
 const DB = {
-  get: function(k){ try{ var v=localStorage.getItem('imob_'+k); return v?JSON.parse(v):null; }catch(e){ console.error('DB.get erro:',e); return null; } },
-  set: function(k,v){ try{ localStorage.setItem('imob_'+k, JSON.stringify(v)); return true; }catch(e){ console.error('DB.set erro:',e); return false; } },
+  get: function(k){
+    try{
+      // Primeiro tenta cache local para velocidade
+      var local = localStorage.getItem('imob_'+k);
+      return local ? JSON.parse(local) : null;
+    }catch(e){ return null; }
+  },
+  set: function(k,v){
+    try{
+      var json = JSON.stringify(v);
+      localStorage.setItem('imob_'+k, json);
+      // Sincroniza com window.storage (compartilhado)
+      if(window.storage){
+        window.storage.set(k, json, true).catch(function(e){
+          console.warn('window.storage.set falhou:', e);
+        });
+      }
+      return true;
+    }catch(e){ console.error('DB.set erro:',e); return false; }
+  },
+  // Carrega do storage compartilhado para o localStorage local
+  sync: async function(k){
+    if(!window.storage) return;
+    try{
+      var result = await window.storage.get(k, true);
+      if(result && result.value){
+        localStorage.setItem('imob_'+k, result.value);
+      }
+    }catch(e){ /* chave não existe ainda */ }
+  },
   keys: function(){ try{ return Object.keys(localStorage).filter(function(k){return k.startsWith('imob_');}).map(function(k){return k.replace('imob_','');}); }catch(e){ return []; } }
 };
+
+// Sincronizar dados do storage compartilhado ao carregar a página
+async function sincronizarStorage(){
+  if(!window.storage) return;
+  var slugs = ['veraneio','solares','sfassis','girassol','terceiros'];
+  for(var s of slugs){
+    await DB.sync('contratos_'+s);
+    await DB.sync('carteira_');
+    await DB.sync('despesas_');
+  }
+  // Recarregar aba ativa se for arquivo
+  var abaAtiva = document.querySelector('[id^="aba-arq-"]:not([style*="none"])');
+  if(abaAtiva){
+    var slug = abaAtiva.id.replace('aba-arq-','');
+    carregarArquivo(slug);
+  }
+}
+
+window.addEventListener('load', function(){
+  setTimeout(sincronizarStorage, 500);
+});
 
 const MESES_NOMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
