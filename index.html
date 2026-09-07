@@ -35031,19 +35031,19 @@ function montarContrato(d){
   var pjRepRGFinal = d.pjRepRG || d.afPjRepRG || '';
   var pjRepEndFinal = d.pjRepEnd || d.afPjRepEnd || '';
   if(temPJ){
-    // Locadores — só nomes
-    var nomesLocadores=locadores.map(l=>l.nome).filter(Boolean).join(' e ');
-    h+='<p>'+nomesLocadores+'.</p>';
-    // Empresa representante — completo
-    var pjTexto='Os Locadores são representados pela empresa <strong>'+pjRazaoFinal+'</strong>, CNPJ n.º <strong>'+pjCNPJFinal+'</strong>';
+    // Locadores — nomes completos com qualificação primeiro
+    h+='<p>'+txtLocadores+'.</p>';
+    // Depois empresa representante — texto jurídico completo
+    var pjTexto='Os Locadores acima qualificados são representados, para todos os fins e efeitos deste instrumento, pela empresa <strong>'+pjRazaoFinal+'</strong>, pessoa jurídica de direito privado, inscrita no CNPJ n.º <strong>'+pjCNPJFinal+'</strong>';
     if(pjEndFinal) pjTexto+=', com sede na '+pjEndFinal;
-    if(pjRepNomeFinal) pjTexto+=', neste ato representada por <strong>'+pjRepNomeFinal+'</strong>';
+    if(pjRepNomeFinal) pjTexto+=', neste ato representada por seu sócio administrador <strong>'+pjRepNomeFinal+'</strong>';
     if(pjRepNacFinal) pjTexto+=', '+pjRepNacFinal;
     if(pjRepProfFinal) pjTexto+=', '+pjRepProfFinal;
     if(pjRepECFinal) pjTexto+=', '+pjRepECFinal;
-    if(pjRepCPFFinal) pjTexto+=', CPF n.º '+pjRepCPFFinal;
-    if(pjRepRGFinal) pjTexto+=', RG n.º '+pjRepRGFinal;
+    if(pjRepCPFFinal) pjTexto+=', inscrito no CPF n.º '+pjRepCPFFinal;
+    if(pjRepRGFinal) pjTexto+=', portador da Carteira de Identidade n.º '+pjRepRGFinal;
     if(pjRepEndFinal) pjTexto+=', residente e domiciliado em '+pjRepEndFinal;
+    pjTexto+=', nos termos do Contrato Social e do art. 47 do Código Civil';
     h+='<p>'+pjTexto+'.</p>';
   } else {
     h+='<p>'+txtLocadores+'.</p>';
@@ -35321,17 +35321,20 @@ async function gerarDocx(d){
   var pjRepRGW = d.pjRepRG || d.afPjRepRG || '';
   var pjRepEndW = d.pjRepEnd || d.afPjRepEnd || '';
   if(temPJW){
-    var nomesLocadoresW = locadores.map(l=>l.nome).filter(Boolean).join(' e ');
-    ps.push(par(nomesLocadoresW+'.'));
-    var pjTxtW='Os Locadores são representados pela empresa '+pjRazaoW+', CNPJ n.º '+pjCNPJW;
+    // Locadores — completos primeiro
+    var txtLocadoresWordPJ = locadores.map(l=>{return l.nome+(l.qual?', '+l.qual:'')+(l.cpf?', CPF n.º '+l.cpf:'')+(l.rg&&l.rg!=='_______________'?', RG n.º '+l.rg:'');}).join(', e ');
+    ps.push(par(txtLocadoresWordPJ+'.'));
+    // Depois empresa — texto jurídico completo
+    var pjTxtW='Os Locadores acima qualificados são representados, para todos os fins e efeitos deste instrumento, pela empresa '+pjRazaoW+', pessoa jurídica de direito privado, inscrita no CNPJ n.º '+pjCNPJW;
     if(pjEndW) pjTxtW+=', com sede na '+pjEndW;
-    if(pjRepNomeW) pjTxtW+=', neste ato representada por '+pjRepNomeW;
+    if(pjRepNomeW) pjTxtW+=', neste ato representada por seu sócio administrador '+pjRepNomeW;
     if(pjRepNacW) pjTxtW+=', '+pjRepNacW;
     if(pjRepProfW) pjTxtW+=', '+pjRepProfW;
     if(pjRepECW) pjTxtW+=', '+pjRepECW;
-    if(pjRepCPFW) pjTxtW+=', CPF n.º '+pjRepCPFW;
-    if(pjRepRGW) pjTxtW+=', RG n.º '+pjRepRGW;
+    if(pjRepCPFW) pjTxtW+=', inscrito no CPF n.º '+pjRepCPFW;
+    if(pjRepRGW) pjTxtW+=', portador da Carteira de Identidade n.º '+pjRepRGW;
     if(pjRepEndW) pjTxtW+=', residente e domiciliado em '+pjRepEndW;
+    pjTxtW+=', nos termos do Contrato Social e do art. 47 do Código Civil';
     ps.push(par(pjTxtW+'.'));
   } else {
     var txtLocadoresWord = locadores.map(l=>{return l.nome+(l.qual?', '+l.qual:'')+(l.cpf?', CPF n.º '+l.cpf:'')+(l.rg&&l.rg!=='_______________'?', RG n.º '+l.rg:'');}).join(', e ');
