@@ -33334,6 +33334,10 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     <h1>⚖️ Imobiliária Afrânio Melo — Gerador de Contratos</h1>
     <small>Dr. Afrânio Geraldo de Melo · OAB/ES 23.365 · CRECI 8857/ES</small>
   </div>
+  <div style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 16px;text-align:center">
+    <div style="font-size:10px;opacity:.7;letter-spacing:.5px;text-transform:uppercase">Mês em curso</div>
+    <div id="topo-mes-label" style="font-size:15px;font-weight:600;margin-top:2px">—</div>
+  </div>
 </div>
 
 <div class="abas">
@@ -33775,6 +33779,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     <p style="font-size:11px;color:#888;margin-bottom:14px">Lance os pagamentos conforme entram. <strong style="color:#1a3a5c">🏢 Imobiliária</strong> vai para o fechamento do mês. <strong style="color:#276749">👤 Locador</strong> fica só no controle.</p>
     <div id="af-financeiro-lista"></div>
     <button class="btn-add" onclick="addPgtoFinanceiro('af')">+ Lançar pagamento</button>
+    <p style="font-size:11px;color:#888;margin-top:8px">Cada pagamento lançado aqui também aparece no <strong>Fechamento do Mês</strong>. Clique em <strong>Fechar negociação</strong> para classificar o tipo.</p>
   </div>
 
   <!-- AÇÕES -->
@@ -34296,6 +34301,7 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
     <p style="font-size:11px;color:#888;margin-bottom:14px">Lance os pagamentos conforme entram. <strong style="color:#1a3a5c">🏢 Imobiliária</strong> vai para o fechamento do mês. <strong style="color:#276749">👤 Locador</strong> fica só no controle.</p>
     <div id="t3-financeiro-lista"></div>
     <button class="btn-add" onclick="addPgtoFinanceiro('t3')">+ Lançar pagamento</button>
+    <p style="font-size:11px;color:#888;margin-top:8px">Cada pagamento lançado aqui também aparece no <strong>Fechamento do Mês</strong>. Clique em <strong>Fechar negociação</strong> para classificar o tipo.</p>
   </div>
 
   <div class="acoes">
@@ -35575,57 +35581,79 @@ const finCount = {af:0, t3:0};
 function addPgtoFinanceiro(pref){
   finCount[pref]++;
   const n = finCount[pref];
+  const id = pref+'-fin-'+n;
   const div = document.createElement('div');
   div.className = 'card-pgto';
-  div.style.marginBottom = '12px';
-  div.id = pref+'-fin-'+n;
+  div.style.cssText = 'background:#fff;border:0.5px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:10px';
+  div.id = id;
   div.innerHTML = `
-    <button class="btn-rem" onclick="this.parentElement.remove()" title="Remover">✕</button>
-    <div class="grid g2" style="margin-bottom:10px">
-      <div class="campo"><label>Descrição do pagamento</label>
-        <select id="${pref}-fin${n}-desc" style="border:1px solid #d1d9e0;border-radius:6px;padding:8px 10px;font-size:13px">
-          <option value="Reserva do imóvel">Reserva do imóvel</option>
-          <option value="1.º Aluguel">1.º Aluguel</option>
-          <option value="Caução">Caução</option>
-          <option value="Caução — 1.ª parcela">Caução — 1.ª parcela</option>
-          <option value="Caução — 2.ª parcela">Caução — 2.ª parcela</option>
-          <option value="Taxa de aditamento">Taxa de aditamento</option>
-          <option value="Taxa de encerramento">Taxa de encerramento</option>
-          <option value="Outro">Outro</option>
-        </select>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+      <div class="campo" style="min-width:120px">
+        <label>Data</label>
+        <input type="date" id="${pref}-fin${n}-data">
       </div>
-      <div class="campo"><label>Destino</label>
-        <select id="${pref}-fin${n}-destino" style="border:1px solid #d1d9e0;border-radius:6px;padding:8px 10px;font-size:13px;font-weight:600">
-          <option value="imobiliaria">🏢 Imobiliária — entra no fechamento</option>
-          <option value="locador">👤 Locador — só controle</option>
-        </select>
+      <div class="campo" style="min-width:120px">
+        <label>Valor (R$)</label>
+        <input type="number" step="0.01" id="${pref}-fin${n}-val" placeholder="0,00">
       </div>
+      <div class="campo" style="flex:1;min-width:140px">
+        <label>Locatário</label>
+        <input type="text" id="${pref}-fin${n}-locatario" placeholder="Nome do locatário">
+      </div>
+      <div class="campo" style="flex:1;min-width:140px">
+        <label>Locador</label>
+        <input type="text" id="${pref}-fin${n}-locador" placeholder="Nome do locador">
+      </div>
+      <span id="${pref}-fin${n}-badge" style="background:#fef3c7;color:#92400e;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;white-space:nowrap;align-self:center">Em aberto</span>
     </div>
-    <div class="grid g4">
-      <div class="campo"><label>Valor (R$)</label><input type="number" step="0.01" id="${pref}-fin${n}-val" placeholder="0,00"></div>
-      <div class="campo"><label>Data do pagamento</label><input type="date" id="${pref}-fin${n}-data"></div>
-      <div class="campo"><label>Quem pagou</label><input type="text" id="${pref}-fin${n}-quem" placeholder="Nome de quem pagou"></div>
-      <div class="campo"><label>Para quem (recebedor)</label><input type="text" id="${pref}-fin${n}-recv" placeholder="Nome do recebedor"></div>
+    <div id="${pref}-fin${n}-botoes" style="display:flex;gap:6px;flex-wrap:wrap">
+      <button type="button" onclick="mostrarPainelFinanceiro('${pref}',${n})" style="font-size:11px;padding:5px 14px;border-radius:6px;background:#1a3a5c;color:#fff;border:none;cursor:pointer;font-weight:500">🔒 Fechar negociação</button>
+      <button type="button" onclick="document.getElementById('${id}').remove();salvarFormulario('${pref}')" style="font-size:11px;padding:5px 12px;border-radius:6px;background:none;color:#c53030;border:0.5px solid #fc8181;cursor:pointer">🗑 Remover</button>
     </div>
-    <div class="grid g3" style="margin-top:8px">
-      <div class="campo"><label>Forma de pagamento</label>
-        <select id="${pref}-fin${n}-forma" onchange="togglePixFin('${pref}',${n},this.value)" style="border:1px solid #d1d9e0;border-radius:6px;padding:8px 10px;font-size:13px">
-          <option value="PIX">PIX</option>
-          <option value="Dinheiro">Dinheiro</option>
-          <option value="Transferência">Transferência bancária</option>
-          <option value="Cheque">Cheque</option>
-        </select>
+    <div id="${pref}-fin${n}-painel" style="display:none;margin-top:14px;padding-top:14px;border-top:0.5px solid #e2e8f0">
+      <p style="font-size:12px;color:#666;margin:0 0 10px">Selecione o tipo da transação:</p>
+      <select id="${pref}-fin${n}-tipo" onchange="toggleOutroFinanceiro('${pref}',${n})" style="width:100%;font-size:13px;padding:8px 10px;border-radius:6px;border:0.5px solid #ccc;margin-bottom:10px">
+        <option value="locacao">📋 Locação</option>
+        <option value="aditivo">📄 Aditivo</option>
+        <option value="venda">🏠 Venda</option>
+        <option value="notificacao">📬 Notificação</option>
+        <option value="outro">📝 Outro</option>
+      </select>
+      <div id="${pref}-fin${n}-outro-campo" style="display:none;margin-bottom:10px">
+        <input type="text" id="${pref}-fin${n}-outro-txt" placeholder="Descreva o tipo..." style="width:100%;font-size:13px;padding:8px 10px;border-radius:6px;border:0.5px solid #ccc;box-sizing:border-box">
       </div>
-      <div class="campo" id="${pref}-fin${n}-pix-campo"><label>Chave PIX</label><input type="text" id="${pref}-fin${n}-pix" placeholder="CPF, e-mail, telefone ou chave"></div>
-      <div class="campo"><label>Status</label>
-        <select id="${pref}-fin${n}-status" style="border:1px solid #d1d9e0;border-radius:6px;padding:8px 10px;font-size:13px;font-weight:600">
-          <option value="recebido">✅ Recebido</option>
-          <option value="a_receber">⏳ A receber</option>
-        </select>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" onclick="ocultarPainelFinanceiro('${pref}',${n})" style="font-size:11px;padding:5px 12px;border-radius:6px;background:none;color:#666;border:0.5px solid #ccc;cursor:pointer">Cancelar</button>
+        <button type="button" onclick="confirmarPainelFinanceiro('${pref}',${n})" style="font-size:11px;padding:5px 14px;border-radius:6px;background:#1a3a5c;color:#fff;border:none;cursor:pointer;font-weight:500">🔒 Confirmar</button>
       </div>
     </div>`;
   document.getElementById(pref+'-financeiro-lista').appendChild(div);
-  // Salvar automaticamente
+  salvarFormulario(pref);
+}
+
+function mostrarPainelFinanceiro(pref,n){
+  document.getElementById(pref+'-fin'+n+'-painel').style.display='';
+  document.getElementById(pref+'-fin'+n+'-botoes').style.display='none';
+}
+function ocultarPainelFinanceiro(pref,n){
+  document.getElementById(pref+'-fin'+n+'-painel').style.display='none';
+  document.getElementById(pref+'-fin'+n+'-botoes').style.display='flex';
+}
+function toggleOutroFinanceiro(pref,n){
+  const sel=document.getElementById(pref+'-fin'+n+'-tipo');
+  const campo=document.getElementById(pref+'-fin'+n+'-outro-campo');
+  if(campo)campo.style.display=sel&&sel.value==='outro'?'':'none';
+}
+function confirmarPainelFinanceiro(pref,n){
+  const nomes={locacao:'📋 Locação',aditivo:'📄 Aditivo',venda:'🏠 Venda',notificacao:'📬 Notificação',outro:'📝 Outro'};
+  const tipo=document.getElementById(pref+'-fin'+n+'-tipo')?.value||'locacao';
+  const outroTxt=document.getElementById(pref+'-fin'+n+'-outro-txt')?.value||'';
+  const label=tipo==='outro'?(outroTxt||'Outro'):nomes[tipo];
+  const badge=document.getElementById(pref+'-fin'+n+'-badge');
+  const card=document.getElementById(pref+'-fin-'+n);
+  if(badge){badge.textContent=label;badge.style.background='#c6f6d5';badge.style.color='#276749';}
+  if(card){card.style.background='#f0fff4';card.style.borderColor='#9ae6b4';}
+  ocultarPainelFinanceiro(pref,n);
   salvarFormulario(pref);
 }
 
@@ -35760,6 +35788,10 @@ function popularMeses(){
     }
   });
   meses.sort().reverse();
+
+  // Atualizar indicador de mês no topo
+  const topoMes = document.getElementById('topo-mes-label');
+  if(topoMes) topoMes.textContent = fmtMes(atual);
 
   ['carteira-mes-sel','desp-mes-sel','fech-mes-sel'].forEach(id=>{
     const el=g(id); if(!el)return;
