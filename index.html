@@ -33662,75 +33662,10 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
 
   <!-- PAGAMENTOS -->
   <div class="secao">
-    <div class="secao-titulo">Pagamentos Realizados</div>
-
-    <!-- Reserva -->
-    <div class="card-pgto" style="margin-bottom:12px">
-      <div class="card-titulo">🔑 Reserva do Imóvel</div>
-      <div class="grid g4">
-        <div class="campo"><label>Valor (R$)</label><input id="af-reserva-val" type="number" step="0.01" placeholder="0,00"></div>
-        <div class="campo"><label>Data do pagamento</label><input id="af-reserva-data" type="date"></div>
-        <div class="campo"><label>Quem pagou</label><input id="af-reserva-quem" type="text" placeholder="Nome de quem pagou"></div>
-        <div class="campo"><label>Para quem (recebedor)</label><input id="af-reserva-recv" type="text" placeholder="Nome do recebedor"></div>
-      </div>
-      <div class="grid g2" style="margin-top:8px">
-        <div class="campo"><label>Chave PIX utilizada</label><input id="af-reserva-pix" type="text" placeholder="PIX"></div>
-        <div class="campo"><label>Forma de pagamento</label>
-          <select id="af-reserva-forma">
-            <option value="PIX">PIX</option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Transferência">Transferência bancária</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Repasse imobiliária -->
-    <div class="card-pgto" style="margin-bottom:12px" id="af-pgto-imob-card">
-      <div class="card-titulo">🏢 Repasse — Imobiliária (1.º Aluguel)</div>
-      <div class="grid g4">
-        <div class="campo"><label>Valor (R$)</label><input id="af-pgto-imob-val" type="number" step="0.01" placeholder="0,00"></div>
-        <div class="campo"><label>Data do pagamento</label><input id="af-pgto-imob-data" type="date"></div>
-        <div class="campo"><label>Quem pagou</label><input id="af-pgto-imob-quem" type="text" placeholder="Nome de quem pagou"></div>
-        <div class="campo"><label>Para quem (recebedor)</label><input id="af-pgto-imob-recv" type="text" placeholder="Nome do recebedor" value="Imobiliária Afrânio Melo"></div>
-      </div>
-      <div class="grid g2" style="margin-top:8px">
-        <div class="campo"><label>Chave PIX</label><input id="af-pgto-imob-pix" type="text" placeholder="PIX" value="877.073.656-15"></div>
-        <div class="campo"><label>Forma</label>
-          <select id="af-pgto-imob-forma">
-            <option value="PIX">PIX</option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Transferência">Transferência bancária</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Repasse locador -->
-    <div class="card-pgto" style="margin-bottom:12px">
-      <div class="card-titulo">👤 Repasse — Locador</div>
-      <div class="grid g4">
-        <div class="campo"><label>Valor (R$)</label><input id="af-pgto-loc-val" type="number" step="0.01" placeholder="0,00"></div>
-        <div class="campo"><label>Data do pagamento</label><input id="af-pgto-loc-data" type="date"></div>
-        <div class="campo"><label>Quem pagou</label><input id="af-pgto-loc-quem" type="text" placeholder="Nome de quem pagou"></div>
-        <div class="campo"><label>Para quem (recebedor)</label><input id="af-pgto-loc-recv" type="text" placeholder="Nome do recebedor" value="Afrânio Geraldo de Melo"></div>
-      </div>
-      <div class="grid g2" style="margin-top:8px">
-        <div class="campo"><label>Chave PIX</label><input id="af-pgto-loc-pix" type="text" placeholder="PIX" value="877.073.656-15"></div>
-        <div class="campo"><label>Forma</label>
-          <select id="af-pgto-loc-forma">
-            <option value="PIX">PIX</option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Transferência">Transferência bancária</option>
-            <option value="À vista">À vista</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Outros pagamentos -->
-    <div id="af-outros-pgtos"></div>
-    <button class="btn-add" onclick="addPgto('af')">+ Adicionar outro pagamento</button>
+    <div class="secao-titulo">PAGAMENTOS REALIZADOS</div>
+    <p style="font-size:11px;color:#888;margin-bottom:14px">Lance os pagamentos conforme entram. Clique em <strong>Fechar negociação</strong> para classificar o tipo e enviar ao Fechamento do Mês.</p>
+    <div id="af-financeiro-lista"></div>
+    <button class="btn-add" onclick="addPgtoFinanceiro('af')">+ Lançar pagamento</button>
   </div>
 
   <!-- LAUDO DE VISTORIA -->
@@ -33833,6 +33768,9 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       <div class="grid g2" style="margin-bottom:10px">
         <div class="campo"><label>Razão Social</label><input id="t3-pj-razao" type="text" placeholder="Nome da empresa"></div>
         <div class="campo"><label>CNPJ</label><input id="t3-pj-cnpj" type="text" placeholder="00.000.000/0001-00"></div>
+      </div>
+      <div class="campo" style="margin-top:8px"><label>Endereço da sede da empresa</label><input id="t3-pj-end" type="text" placeholder="Rua, n.º, Bairro, CEP, Cidade/UF"></div>
+      <div class="grid g2" style="margin-top:8px">
       </div>
       <div class="secao-titulo" style="margin-top:14px;margin-bottom:12px">REPRESENTANTE LEGAL</div>
       <div class="grid g2" style="margin-bottom:10px">
@@ -34175,60 +34113,10 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
 
   <!-- PAGAMENTOS T3 -->
   <div class="secao">
-    <div class="secao-titulo">Pagamentos Realizados</div>
-    <div class="card-pgto" style="margin-bottom:12px">
-      <div class="card-titulo">🔑 Reserva do Imóvel</div>
-      <div class="grid g4">
-        <div class="campo"><label>Valor (R$)</label><input id="t3-reserva-val" type="number" step="0.01"></div>
-        <div class="campo"><label>Data</label><input id="t3-reserva-data" type="date"></div>
-        <div class="campo"><label>Quem pagou</label><input id="t3-reserva-quem" type="text"></div>
-        <div class="campo"><label>Para quem</label><input id="t3-reserva-recv" type="text"></div>
-      </div>
-      <div class="grid g2" style="margin-top:8px">
-        <div class="campo"><label>Chave PIX</label><input id="t3-reserva-pix" type="text"></div>
-        <div class="campo"><label>Forma</label>
-          <select id="t3-reserva-forma">
-            <option value="PIX">PIX</option><option value="Dinheiro">Dinheiro</option><option value="Transferência">Transferência</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="card-pgto" style="margin-bottom:12px">
-      <div class="card-titulo">🏢 Repasse — Imobiliária</div>
-      <div class="grid g4">
-        <div class="campo"><label>Valor (R$)</label><input id="t3-pgto-imob-val" type="number" step="0.01"></div>
-        <div class="campo"><label>Data</label><input id="t3-pgto-imob-data" type="date"></div>
-        <div class="campo"><label>Quem pagou</label><input id="t3-pgto-imob-quem" type="text"></div>
-        <div class="campo"><label>Para quem</label><input id="t3-pgto-imob-recv" type="text" value="Imobiliária Afrânio Melo"></div>
-      </div>
-      <div class="grid g2" style="margin-top:8px">
-        <div class="campo"><label>Chave PIX</label><input id="t3-pgto-imob-pix" type="text" value="877.073.656-15"></div>
-        <div class="campo"><label>Forma</label>
-          <select id="t3-pgto-imob-forma">
-            <option value="PIX">PIX</option><option value="Dinheiro">Dinheiro</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="card-pgto" style="margin-bottom:12px">
-      <div class="card-titulo">👤 Repasse — Locador</div>
-      <div class="grid g4">
-        <div class="campo"><label>Valor (R$)</label><input id="t3-pgto-loc-val" type="number" step="0.01"></div>
-        <div class="campo"><label>Data</label><input id="t3-pgto-loc-data" type="date"></div>
-        <div class="campo"><label>Quem pagou</label><input id="t3-pgto-loc-quem" type="text"></div>
-        <div class="campo"><label>Para quem</label><input id="t3-pgto-loc-recv" type="text"></div>
-      </div>
-      <div class="grid g2" style="margin-top:8px">
-        <div class="campo"><label>Chave PIX</label><input id="t3-pgto-loc-pix" type="text"></div>
-        <div class="campo"><label>Forma</label>
-          <select id="t3-pgto-loc-forma">
-            <option value="PIX">PIX</option><option value="Dinheiro">Dinheiro</option><option value="À vista">À vista</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div id="t3-outros-pgtos"></div>
-    <button class="btn-add" onclick="addPgto('t3')">+ Adicionar outro pagamento</button>
+    <div class="secao-titulo">PAGAMENTOS REALIZADOS</div>
+    <p style="font-size:11px;color:#888;margin-bottom:14px">Lance os pagamentos conforme entram. Clique em <strong>Fechar negociação</strong> para classificar o tipo e enviar ao Fechamento do Mês.</p>
+    <div id="t3-financeiro-lista"></div>
+    <button class="btn-add" onclick="addPgtoFinanceiro('t3')">+ Lançar pagamento</button>
   </div>
 
   <!-- LAUDO DE VISTORIA POR CÔMODO T3 -->
@@ -34859,9 +34747,7 @@ function coletarDados(pref){
       ref2:{nome:val('af-ref2-nome'),tel:val('af-ref2-tel')},
       financeiro:coletarFinanceiro('af'),
       imob:g('af-tem-imob').checked,imobNome:val('af-imob-nome'),imobPix:val('af-imob-pix'),imobAdit:val('af-imob-adit'),imobEnc:val('af-imob-enc'),
-      reserva:{val:val('af-reserva-val'),data:val('af-reserva-data'),quem:val('af-reserva-quem'),recv:val('af-reserva-recv'),pix:val('af-reserva-pix'),forma:val('af-reserva-forma')},
-      pgtoImob:{val:val('af-pgto-imob-val'),data:val('af-pgto-imob-data'),quem:val('af-pgto-imob-quem'),recv:val('af-pgto-imob-recv'),pix:val('af-pgto-imob-pix'),forma:val('af-pgto-imob-forma')},
-      pgtoLoc:{val:val('af-pgto-loc-val'),data:val('af-pgto-loc-data'),quem:val('af-pgto-loc-quem'),recv:val('af-pgto-loc-recv'),pix:val('af-pgto-loc-pix'),forma:val('af-pgto-loc-forma')},
+      financeiro:coletarFinanceiro('af'),
       extras:coletarPgtosExtras('af'),
       laudo:{geral:val('af-laudo-geral'),detalhe:val('af-laudo-detalhe')},
       test1:{nome:val('af-test1-nome'),cpf:val('af-test1-cpf')},test2:{nome:val('af-test2-nome'),cpf:val('af-test2-cpf')},
@@ -34899,7 +34785,7 @@ function coletarDados(pref){
       proc:{nome:val('t3-proc-nome'),cpf:val('t3-proc-cpf'),rg:val('t3-proc-rg'),poderes:val('t3-proc-poderes')},
       aVenda:val('t3-a-venda')==='sim',comissao:val('t3-comissao'),
       locPJ: document.getElementById('t3-loc-pj')?.checked||false,
-      pjRazao: val('t3-pj-razao'), pjCNPJ: val('t3-pj-cnpj'),
+      pjRazao: val('t3-pj-razao'), pjCNPJ: val('t3-pj-cnpj'), pjEnd: val('t3-pj-end'),
       pjRepNome: val('t3-pj-rep-nome'), pjRepNac: val('t3-pj-rep-nac'),
       pjRepProf: val('t3-pj-rep-prof'), pjRepEC: val('t3-pj-rep-ec'),
       pjRepCPF: val('t3-pj-rep-cpf'), pjRepRG: val('t3-pj-rep-rg'),
@@ -34909,9 +34795,7 @@ function coletarDados(pref){
       ref2:{nome:val('t3-ref2-nome'),tel:val('t3-ref2-tel')},
       financeiro:coletarFinanceiro('t3'),
       imob:true,imobNome:'Imobiliária Afrânio Melo',imobPix:'CNPJ 29.946.290/0001-54',imobAdit:val('t3-imob-adit')||'',imobEnc:val('t3-imob-enc')||'',
-      reserva:{val:val('t3-reserva-val'),data:val('t3-reserva-data'),quem:val('t3-reserva-quem'),recv:val('t3-reserva-recv'),pix:val('t3-reserva-pix'),forma:val('t3-reserva-forma')},
-      pgtoImob:{val:val('t3-pgto-imob-val'),data:val('t3-pgto-imob-data'),quem:val('t3-pgto-imob-quem'),recv:val('t3-pgto-imob-recv'),pix:val('t3-pgto-imob-pix'),forma:val('t3-pgto-imob-forma')},
-      pgtoLoc:{val:val('t3-pgto-loc-val'),data:val('t3-pgto-loc-data'),quem:val('t3-pgto-loc-quem'),recv:val('t3-pgto-loc-recv'),pix:val('t3-pgto-loc-pix'),forma:val('t3-pgto-loc-forma')},
+      financeiro:coletarFinanceiro('t3'),
       extras:coletarPgtosExtras('t3'),
       laudo:{geral:'',detalhe:''},
       test1:{nome:val('t3-test1-nome'),cpf:val('t3-test1-cpf')},test2:{nome:val('t3-test2-nome'),cpf:val('t3-test2-cpf')},
@@ -35094,7 +34978,11 @@ function montarContrato(d){
   // CLÁUSULA PRIMEIRA
   h+='<p><strong>CLÁUSULA PRIMEIRA — DAS PARTES CONTRATANTES</strong></p>';
   h+='<p><strong>LOCADOR(ES)</strong></p>';
-  h+='<p>'+(d.locPJ && txtLocadoresPJ ? txtLocadoresPJ : txtLocadores)+', com endereço comercial na Rua São Luís, n.º 25, Lojas 01 e 02, Bairro Jóquei de Itaparica, CEP 29.103-890, Vila Velha/ES, e-mail afraniodemelo@yahoo.com.br | lucienemaurapsicanalise@gmail.com, telefones (27) 9 9834-1799.</p>';
+  if(d.locPJ && txtLocadoresPJ){
+    h+='<p>'+txtLocadoresPJ+(d.pjEnd?', com sede na '+d.pjEnd:''+(d.pjRepEnd?', representante residente em '+d.pjRepEnd:''))+'.</p>';
+  } else {
+    h+='<p>'+txtLocadores+(locadores.length>0&&locadores[0].end?', residente e domiciliado em '+locadores[0].end:'')+'.</p>';
+  }
   h+='<p><strong>'+loc_t.toUpperCase()+'</strong></p>';
   h+='<p>'+txtLct1+'.</p>';
   if(txtLct2)h+='<p><strong>'+loc_t.toUpperCase()+' 2</strong></p><p>'+txtLct2+'.</p>';
@@ -35111,10 +34999,14 @@ function montarContrato(d){
 
   // CLÁUSULA TERCEIRA
   h+='<p><strong>CLÁUSULA TERCEIRA — DO PRAZO DA LOCAÇÃO, DO VALOR DO ALUGUEL, DOS ENCARGOS, DOS PAGAMENTOS, DA RENOVAÇÃO, DAS MULTAS E DA GARANTIA CONTRATUAL</strong></p>';
-  h+='<p><strong>1. Do Prazo da Locação</strong><br>O contrato terá duração de <strong>12 (doze) meses</strong>, com início em <strong>'+fmtDt(dataIni)+'</strong> e término em <strong>'+fmtDt(dataFim)+'</strong>. Fica expressamente vedada qualquer alegação de prazo de 6 (seis) meses. Caso haja interesse de ambas as partes, o contrato poderá ser renovado, até completar 36 (trinta e seis) meses.</p>';
-  h+='<p><strong>2. Do Valor do Aluguel</strong><br>O aluguel mensal é de <strong>'+fmtM(aluguel)+'</strong>, na modalidade "mora-se para pagar".'+(condTem&&condVal?'<br>O valor mensal do condomínio é de <strong>'+fmtM(condVal)+'</strong>, devendo ser pago até o vencimento, sob pena de multa.':'')+'</p>';
-  h+='<p><strong>3. Dos Encargos e Taxas</strong></p>';
-  if(condTem)h+='<p><strong>Condomínio:</strong> O valor mensal do condomínio é variável, conforme as despesas do edifício, devendo ser pago até a data de seu vencimento, sob pena de multa.</p>';
+  h+='<p><strong>1. Do Prazo da Locação</strong><br>O contrato terá duração de <strong>12 (doze) meses</strong>, com início em <strong>'+fmtDt(dataIni)+'</strong> e término em <strong>'+fmtDt(dataFim)+'</strong>. Fica expressamente vedada qualquer alegação de prazo de 6 (seis) meses. Caso haja interesse de ambas as partes, o contrato poderá ser renovado até completar 36 (trinta e seis) meses, nos termos do art. 46 da Lei n.º 8.245/1991.</p>';
+  h+='<p><strong>2. Do Valor do Aluguel</strong><br>O aluguel mensal é de <strong>'+fmtM(aluguel)+'</strong>, na modalidade "mora-se para pagar", nos termos do art. 17 da Lei n.º 8.245/1991. O valor do aluguel é fixo durante a vigência do contrato, salvo reajuste previsto na renovação.</p>';
+  h+='<p><strong>3. Do Condomínio</strong><br>';
+  if(condTem&&condVal){
+    h+='O valor mensal do condomínio é de <strong>'+fmtM(condVal)+'</strong>, podendo sofrer variações em função das despesas do edifício, deliberadas em assembleia condominial, nos termos da Lei n.º 9.307/1994 e do art. 1.348 do Código Civil. '+Art+' '+loc_t+' deverá efetuar o pagamento até a data de seu vencimento, sob pena de multa e rescisão contratual, nos termos do art. 23, I da Lei n.º 8.245/1991.</p>';
+  } else {
+    h+='O imóvel não possui taxa condominial.</p>';
+  }
   h+='<p><strong>4. Do IPTU e da Taxa de Lixo</strong><br>O IPTU e a taxa de lixo permanecerão em nome do Locador, sendo de responsabilidade '+do_a+' '+loc_t+' o pagamento antes do vencimento, sob pena de rescisão contratual, nos termos do art. 23, VIII da Lei n.º 8.245/1991.</p>';
   // Água
   var aguaTipo=d.aguaTipo||'individual';
@@ -35531,10 +35423,7 @@ function limparForm(pref){
     g('af-proc-rg').value='MG-628.880';
     g('af-imob-nome').value='Imobiliária Afrânio Melo';
     g('af-imob-pix').value='877.073.656-15';
-    g('af-pgto-imob-recv').value='Imobiliária Afrânio Melo';
-    g('af-pgto-imob-pix').value='877.073.656-15';
-    g('af-pgto-loc-recv').value='Afrânio Geraldo de Melo';
-    g('af-pgto-loc-pix').value='877.073.656-15';
+
     g('af-lct2-bloco').style.display='none';
     g('af-imob-bloco').style.display='none';
     g('af-cond-val-campo').style.display='none';
