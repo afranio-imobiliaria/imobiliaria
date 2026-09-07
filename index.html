@@ -33382,6 +33382,40 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
       <p style="font-size:13px;color:#1a3a5c;margin-bottom:10px"><strong>Gabriel Afrânio Souza Melo</strong> — brasileiro, psicólogo, CPF n.º 09.702.536-50</p>
       <p style="font-size:11px;color:#888">Rua São Luís, n.º 25, Lojas 01 e 02, Bairro Jóquei de Itaparica, CEP 29.103-890, Vila Velha/ES · (27) 9 9834-1799</p>
     </div>
+    <!-- Toggle empresa representante -->
+    <div class="toggle-row" style="margin-top:14px">
+      <input type="checkbox" class="toggle" id="af-loc-pj" onchange="toggleLocPJAf()">
+      <label for="af-loc-pj">Locadores são <strong>representados por empresa</strong></label>
+    </div>
+    <div id="af-bloco-pj" style="display:none;margin-top:12px;padding:16px;background:#f0f4f8;border-radius:8px;border:1px solid #e2e8f0">
+      <div class="secao-titulo" style="margin-bottom:12px">EMPRESA REPRESENTANTE</div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div class="campo"><label>Razão Social</label><input id="af-pj-razao" type="text" placeholder="Nome da empresa"></div>
+        <div class="campo"><label>CNPJ</label><input id="af-pj-cnpj" type="text" placeholder="00.000.000/0001-00"></div>
+      </div>
+      <div class="campo" style="margin-bottom:10px"><label>Endereço da sede</label><input id="af-pj-end" type="text" placeholder="Rua, n.º, Bairro, CEP, Cidade/UF"></div>
+      <div class="secao-titulo" style="margin:12px 0 8px;font-size:11px">REPRESENTANTE LEGAL</div>
+      <div class="grid g2" style="margin-bottom:8px">
+        <div class="campo"><label>Nome completo</label><input id="af-pj-rep-nome" type="text" placeholder="Nome do representante"></div>
+        <div class="campo"><label>Nacionalidade</label><input id="af-pj-rep-nac" type="text" placeholder="brasileiro / brasileira"></div>
+      </div>
+      <div class="grid g3" style="margin-bottom:8px">
+        <div class="campo"><label>Profissão</label><input id="af-pj-rep-prof" type="text" placeholder="Empresário, Advogado..."></div>
+        <div class="campo"><label>Estado Civil</label>
+          <select id="af-pj-rep-ec" style="border:1px solid #d1d9e0;border-radius:6px;padding:8px 10px;font-size:13px">
+            <option value="">Selecione</option>
+            <option value="solteiro">Solteiro</option><option value="solteira">Solteira</option>
+            <option value="casado">Casado</option><option value="casada">Casada</option>
+            <option value="divorciado">Divorciado</option><option value="divorciada">Divorciada</option>
+          </select>
+        </div>
+        <div class="campo"><label>CPF</label><input id="af-pj-rep-cpf" type="text" placeholder="000.000.000-00"></div>
+      </div>
+      <div class="grid g2">
+        <div class="campo"><label>RG</label><input id="af-pj-rep-rg" type="text" placeholder="RG"></div>
+        <div class="campo"><label>Endereço do representante</label><input id="af-pj-rep-end" type="text" placeholder="Rua, n.º, Bairro, CEP, Cidade/UF"></div>
+      </div>
+    </div>
   </div>
 
   <!-- LOCATÁRIO -->
@@ -34746,6 +34780,12 @@ function coletarDados(pref){
       ref1:{nome:val('af-ref1-nome'),tel:val('af-ref1-tel')},
       ref2:{nome:val('af-ref2-nome'),tel:val('af-ref2-tel')},
       financeiro:coletarFinanceiro('af'),
+      afLocPJ: document.getElementById('af-loc-pj')?.checked||false,
+      afPjRazao: val('af-pj-razao'), afPjCNPJ: val('af-pj-cnpj'), afPjEnd: val('af-pj-end'),
+      afPjRepNome: val('af-pj-rep-nome'), afPjRepNac: val('af-pj-rep-nac'),
+      afPjRepProf: val('af-pj-rep-prof'), afPjRepEC: val('af-pj-rep-ec'),
+      afPjRepCPF: val('af-pj-rep-cpf'), afPjRepRG: val('af-pj-rep-rg'),
+      afPjRepEnd: val('af-pj-rep-end'),
       imob:g('af-tem-imob').checked,imobNome:val('af-imob-nome'),imobPix:val('af-imob-pix'),imobAdit:val('af-imob-adit'),imobEnc:val('af-imob-enc'),
       financeiro:coletarFinanceiro('af'),
       extras:coletarPgtosExtras('af'),
@@ -34978,20 +35018,32 @@ function montarContrato(d){
   // CLÁUSULA PRIMEIRA
   h+='<p><strong>CLÁUSULA PRIMEIRA — DAS PARTES CONTRATANTES</strong></p>';
   h+='<p><strong>LOCADOR(ES)</strong></p>';
-  if(d.locPJ && d.pjRazao){
+  // Verificar se tem empresa representante (t3 ou af)
+  var temPJ = (d.locPJ && d.pjRazao) || (d.afLocPJ && d.afPjRazao);
+  var pjRazaoFinal = d.pjRazao || d.afPjRazao || '';
+  var pjCNPJFinal = d.pjCNPJ || d.afPjCNPJ || '';
+  var pjEndFinal = d.pjEnd || d.afPjEnd || '';
+  var pjRepNomeFinal = d.pjRepNome || d.afPjRepNome || '';
+  var pjRepNacFinal = d.pjRepNac || d.afPjRepNac || '';
+  var pjRepProfFinal = d.pjRepProf || d.afPjRepProf || '';
+  var pjRepECFinal = d.pjRepEC || d.afPjRepEC || '';
+  var pjRepCPFFinal = d.pjRepCPF || d.afPjRepCPF || '';
+  var pjRepRGFinal = d.pjRepRG || d.afPjRepRG || '';
+  var pjRepEndFinal = d.pjRepEnd || d.afPjRepEnd || '';
+  if(temPJ){
     // Locadores — só nomes
     var nomesLocadores=locadores.map(l=>l.nome).filter(Boolean).join(' e ');
     h+='<p>'+nomesLocadores+'.</p>';
     // Empresa representante — completo
-    var pjTexto='Os Locadores são representados pela empresa <strong>'+d.pjRazao+'</strong>, CNPJ n.º <strong>'+d.pjCNPJ+'</strong>';
-    if(d.pjEnd) pjTexto+=', com sede na '+d.pjEnd;
-    pjTexto+=', neste ato representada por <strong>'+(d.pjRepNome||'___')+'</strong>';
-    if(d.pjRepNac) pjTexto+=', '+d.pjRepNac;
-    if(d.pjRepProf) pjTexto+=', '+d.pjRepProf;
-    if(d.pjRepEC) pjTexto+=', '+d.pjRepEC;
-    if(d.pjRepCPF) pjTexto+=', CPF n.º '+d.pjRepCPF;
-    if(d.pjRepRG) pjTexto+=', RG n.º '+d.pjRepRG;
-    if(d.pjRepEnd) pjTexto+=', residente e domiciliado em '+d.pjRepEnd;
+    var pjTexto='Os Locadores são representados pela empresa <strong>'+pjRazaoFinal+'</strong>, CNPJ n.º <strong>'+pjCNPJFinal+'</strong>';
+    if(pjEndFinal) pjTexto+=', com sede na '+pjEndFinal;
+    if(pjRepNomeFinal) pjTexto+=', neste ato representada por <strong>'+pjRepNomeFinal+'</strong>';
+    if(pjRepNacFinal) pjTexto+=', '+pjRepNacFinal;
+    if(pjRepProfFinal) pjTexto+=', '+pjRepProfFinal;
+    if(pjRepECFinal) pjTexto+=', '+pjRepECFinal;
+    if(pjRepCPFFinal) pjTexto+=', CPF n.º '+pjRepCPFFinal;
+    if(pjRepRGFinal) pjTexto+=', RG n.º '+pjRepRGFinal;
+    if(pjRepEndFinal) pjTexto+=', residente e domiciliado em '+pjRepEndFinal;
     h+='<p>'+pjTexto+'.</p>';
   } else {
     h+='<p>'+txtLocadores+'.</p>';
@@ -35257,20 +35309,29 @@ async function gerarDocx(d){
   ps.push(par('PELO PRESENTE INSTRUMENTO PARTICULAR DE LOCAÇÃO DE IMÓVEL, de acordo com a legislação vigente — Lei n.º 8.245/1991, Lei n.º 10.406/2002 (Código Civil), Lei n.º 13.709/2018 (LGPD) e o Código de Processo Civil —, os Locadores e '+art+' '+loc_t+' celebram este contrato sob as cláusulas e condições seguintes:'));
   ps.push(tit('CLÁUSULA PRIMEIRA — DAS PARTES CONTRATANTES'));
   ps.push(par('LOCADOR(ES)',false,true));
-  if(d.locPJ && d.pjRazao){
-    // Locadores — só nomes
+  var temPJW = (d.locPJ && d.pjRazao) || (d.afLocPJ && d.afPjRazao);
+  var pjRazaoW = d.pjRazao || d.afPjRazao || '';
+  var pjCNPJW = d.pjCNPJ || d.afPjCNPJ || '';
+  var pjEndW = d.pjEnd || d.afPjEnd || '';
+  var pjRepNomeW = d.pjRepNome || d.afPjRepNome || '';
+  var pjRepNacW = d.pjRepNac || d.afPjRepNac || '';
+  var pjRepProfW = d.pjRepProf || d.afPjRepProf || '';
+  var pjRepECW = d.pjRepEC || d.afPjRepEC || '';
+  var pjRepCPFW = d.pjRepCPF || d.afPjRepCPF || '';
+  var pjRepRGW = d.pjRepRG || d.afPjRepRG || '';
+  var pjRepEndW = d.pjRepEnd || d.afPjRepEnd || '';
+  if(temPJW){
     var nomesLocadoresW = locadores.map(l=>l.nome).filter(Boolean).join(' e ');
     ps.push(par(nomesLocadoresW+'.'));
-    // Empresa representante — completo
-    var pjTxtW='Os Locadores são representados pela empresa '+d.pjRazao+', CNPJ n.º '+d.pjCNPJ;
-    if(d.pjEnd) pjTxtW+=', com sede na '+d.pjEnd;
-    pjTxtW+=', neste ato representada por '+(d.pjRepNome||'___');
-    if(d.pjRepNac) pjTxtW+=', '+d.pjRepNac;
-    if(d.pjRepProf) pjTxtW+=', '+d.pjRepProf;
-    if(d.pjRepEC) pjTxtW+=', '+d.pjRepEC;
-    if(d.pjRepCPF) pjTxtW+=', CPF n.º '+d.pjRepCPF;
-    if(d.pjRepRG) pjTxtW+=', RG n.º '+d.pjRepRG;
-    if(d.pjRepEnd) pjTxtW+=', residente e domiciliado em '+d.pjRepEnd;
+    var pjTxtW='Os Locadores são representados pela empresa '+pjRazaoW+', CNPJ n.º '+pjCNPJW;
+    if(pjEndW) pjTxtW+=', com sede na '+pjEndW;
+    if(pjRepNomeW) pjTxtW+=', neste ato representada por '+pjRepNomeW;
+    if(pjRepNacW) pjTxtW+=', '+pjRepNacW;
+    if(pjRepProfW) pjTxtW+=', '+pjRepProfW;
+    if(pjRepECW) pjTxtW+=', '+pjRepECW;
+    if(pjRepCPFW) pjTxtW+=', CPF n.º '+pjRepCPFW;
+    if(pjRepRGW) pjTxtW+=', RG n.º '+pjRepRGW;
+    if(pjRepEndW) pjTxtW+=', residente e domiciliado em '+pjRepEndW;
     ps.push(par(pjTxtW+'.'));
   } else {
     var txtLocadoresWord = locadores.map(l=>{return l.nome+(l.qual?', '+l.qual:'')+(l.cpf?', CPF n.º '+l.cpf:'')+(l.rg&&l.rg!=='_______________'?', RG n.º '+l.rg:'');}).join(', e ');
@@ -35609,6 +35670,10 @@ function coletarFinanceiro(pref){
 }
 
 // Toggle Locador PJ
+function toggleLocPJAf(){
+  const show = document.getElementById('af-loc-pj').checked;
+  document.getElementById('af-bloco-pj').style.display = show ? '' : 'none';
+}
 function toggleLocPJ(){
   const isPJ = document.getElementById('t3-loc-pj').checked;
   document.getElementById('t3-bloco-pj').style.display = isPJ ? '' : 'none';
