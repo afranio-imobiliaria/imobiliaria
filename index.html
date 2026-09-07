@@ -35108,7 +35108,7 @@ function montarContrato(d){
   // Água
   var aguaTipo=d.aguaTipo||'individual';
   if(aguaTipo==='individual'){
-    h+='<p><strong>5. Da Água</strong><br>O fornecimento de água é individualizado'+(cesan?', matrícula CESAN n.º <strong>'+cesan+'</strong>':'')+'. '+Art+' '+loc_t+' é responsável pelo pagamento diretamente à CESAN, conforme seu consumo, sob pena de rescisão contratual.</p>';
+    h+='<p><strong>5. Da Água</strong><br>O fornecimento de água é individualizado'+(cesan?', matrícula CESAN n.º <strong>'+cesan+'</strong>':'')+'. '+Art+' '+loc_t+' é responsável pelo pagamento diretamente à CESAN, conforme seu consumo'+(cotas?', correspondendo a <strong>'+cotas+'</strong> cota'+(parseInt(cotas)>1?'s':'')+(totalCotas?' de um total de <strong>'+totalCotas+'</strong> cotas do edifício':'')+','  :'')+' sob pena de rescisão contratual.</p>';
   } else if(aguaTipo==='condominio'){
     h+='<p><strong>5. Da Água</strong><br>O fornecimento de água é cobrado juntamente com a taxa condominial, estando incluso no valor do condomínio. Não há conta individualizada de água para este imóvel.</p>';
   } else {
@@ -35395,7 +35395,7 @@ async function gerarDocx(d){
   ps.push(par('4. Do IPTU e Taxa de Lixo — Permanecerão em nome do Locador, devendo ser pagos '+pelo_a+' '+loc_t+' antes do vencimento, sob pena de rescisão, nos termos do art. 23, VIII da Lei n.\u00ba 8.245/1991.'));
   // Água
   var aguaTipoD=d.aguaTipo||'individual';
-  if(aguaTipoD==='individual') ps.push(par('5. Da Água — Fornecimento individualizado'+(d.cesan?', matrícula CESAN n.\u00ba '+d.cesan:'')+'. '+Art+' '+loc_t+' é responsável pelo pagamento direto à CESAN conforme consumo.'));
+  if(aguaTipoD==='individual') ps.push(par('5. Da Água — Fornecimento individualizado'+(d.cesan?', matrícula CESAN n.º '+d.cesan:'')+'. '+Art+' '+loc_t+' é responsável pelo pagamento direto à CESAN conforme seu consumo'+(d.cotas?', correspondendo a '+d.cotas+' cota'+(parseInt(d.cotas)>1?'s':'')+(d.cotasTotal?' de um total de '+d.cotasTotal+' cotas do edifício':'')+',':'')+' sob pena de rescisão contratual.'));
   else if(aguaTipoD==='condominio') ps.push(par('5. Da Água — Inclusa no condomínio, não há conta individualizada de água.'));
   else ps.push(par('5. Da Água — Conta em nome do Locador'+(d.cesan?', CESAN n.\u00ba '+d.cesan:'')+'. '+Art+' '+loc_t+' paga diretamente ao representante até o vencimento.'));
   // Gás
