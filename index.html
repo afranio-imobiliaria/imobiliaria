@@ -36155,21 +36155,39 @@ function abrirFecharNegociacao(id){
   g('modal-fechar-neg').style.display='';
 }
 
-function confirmarFecharNegociacao(){
+function mostrarPainelFechar(id){
+  var p=document.getElementById('painel-fechar-'+id);
+  var b=document.getElementById('botoes-'+id);
+  if(p)p.style.display='';
+  if(b)b.style.display='none';
+}
+function ocultarPainelFechar(id){
+  var p=document.getElementById('painel-fechar-'+id);
+  var b=document.getElementById('botoes-'+id);
+  if(p)p.style.display='none';
+  if(b)b.style.display='flex';
+}
+function toggleOutroDesc(id){
+  var sel=document.getElementById('tipo-'+id);
+  var campo=document.getElementById('outro-desc-'+id);
+  if(campo)campo.style.display=sel&&sel.value==='outro'?'':'none';
+}
+function confirmarFecharNegociacao(id){
   const mes = getMesFechamento();
-  const id = g('fneg-card-id').value;
-  const tipo = g('fneg-tipo').value;
-  const outroDesc = g('fneg-outro-desc').value;
+  const tipoEl = document.getElementById('tipo-'+id);
+  const outroEl = document.getElementById('outro-txt-'+id);
+  const tipo = tipoEl?tipoEl.value:'locacao';
+  const outroDesc = outroEl?outroEl.value:'';
+  const nomes = {locacao:'📋 Locação',aditivo:'📄 Aditivo',venda:'🏠 Venda',notificacao:'📬 Notificação',outro:'📝 Outro'};
   const lancs = DB.get('lanc_'+mes)||[];
   const idx = lancs.findIndex(x=>x.id===id);
   if(idx>=0){
     lancs[idx].concluido = true;
     lancs[idx].tipo = tipo;
-    lancs[idx].tipoDesc = tipo==='outro'?outroDesc:({locacao:'Locação',aditivo:'Aditivo',venda:'Venda',notificacao:'Notificação'}[tipo]||tipo);
+    lancs[idx].tipoDesc = tipo==='outro'?(outroDesc||'Outro'):nomes[tipo];
     lancs[idx].dtConclusao = new Date().toISOString().split('T')[0];
   }
   DB.set('lanc_'+mes, lancs);
-  g('modal-fechar-neg').style.display='none';
   carregarFechamento();
 }
 
@@ -36210,24 +36228,56 @@ function carregarFechamento(){
     lancs.sort((a,b)=>(a.data||'').localeCompare(b.data||'')).forEach(l=>{
       const card = document.createElement('div');
       card.className = 'lanc-card';
-      card.style.cssText = 'background:'+(l.concluido?'#f0fff4':'#fff')+';border:1px solid '+(l.concluido?'#9ae6b4':'#e2e8f0')+';border-radius:8px;padding:14px;margin-bottom:10px;position:relative';
-      const tipoLabel = l.concluido?`<span style="background:#276749;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700">${l.tipoDesc||l.tipo}</span>`:'<span style="background:#f6ad55;color:#7b341e;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700">Em aberto</span>';
+      card.id = 'card-'+l.id;
+      const concluido = l.concluido;
+      card.style.cssText = 'background:'+(concluido?'var(--bg-success, #f0fff4)':'var(--surface-2, #fff)')+';border:0.5px solid '+(concluido?'var(--border-success, #9ae6b4)':'var(--border, #e2e8f0)')+';border-radius:12px;padding:16px;margin-bottom:10px';
+      const badgeHtml = concluido
+        ? `<span style="background:var(--bg-success,#c6f6d5);color:var(--text-success,#276749);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;border:0.5px solid var(--border-success,#9ae6b4)">${l.tipoDesc||l.tipo}</span>`
+        : `<span style="background:var(--bg-warning,#fef3c7);color:var(--text-warning,#92400e);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500">Em aberto</span>`;
+      const botoesHtml = concluido
+        ? `<button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="abrirModalLancamento('${l.id}')">✏️ Editar</button>`
+        : `<button class="btn btn-primary" style="font-size:11px;padding:5px 12px" onclick="mostrarPainelFechar('${l.id}')">🔒 Fechar negociação</button>
+           <button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="abrirModalLancamento('${l.id}')">✏️ Editar</button>
+           <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;color:var(--text-danger,#c53030);border-color:var(--border-danger,#fc8181)" onclick="removerLancamento('${l.id}')">🗑 Remover</button>`;
       card.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
-          <div>
-            <div style="font-weight:700;font-size:14px;color:#1a3a5c">${l.locador||'—'} → ${l.locatario||'—'}</div>
-            <div style="font-size:12px;color:#666;margin-top:2px">${l.data?fmtData(l.data):''} ${l.quem?'· Pago por: '+l.quem:''} ${l.para?'· Para: '+l.para:''}</div>
-            ${l.obs?`<div style="font-size:11px;color:#888;margin-top:2px">${l.obs}</div>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+            <div>
+              <div style="font-size:10px;color:var(--text-muted,#999);margin-bottom:2px">Data</div>
+              <div style="font-size:13px;font-weight:500;color:var(--text-primary,#222)">${l.data?fmtData(l.data):'—'}</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text-muted,#999);margin-bottom:2px">Valor</div>
+              <div style="font-size:18px;font-weight:500;color:var(--text-primary,#222)">${fmtVal(l.val)}</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text-muted,#999);margin-bottom:2px">Locatário</div>
+              <div style="font-size:13px;font-weight:500;color:var(--text-primary,#222)">${l.locatario||'—'}</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text-muted,#999);margin-bottom:2px">Locador</div>
+              <div style="font-size:13px;font-weight:500;color:var(--text-primary,#222)">${l.locador||'—'}</div>
+            </div>
           </div>
-          <div style="text-align:right">
-            <div style="font-size:18px;font-weight:700;color:#1a3a5c">${fmtVal(l.val)}</div>
-            <div style="margin-top:4px">${tipoLabel}</div>
-          </div>
+          ${badgeHtml}
         </div>
-        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
-          ${!l.concluido?`<button class="btn btn-primary" style="font-size:11px;padding:5px 12px" onclick="abrirFecharNegociacao('${l.id}')">🔒 Fechar Negociação</button>`:''}
-          <button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="abrirModalLancamento('${l.id}')">✏️ Editar</button>
-          ${!l.concluido?`<button class="btn btn-outline" style="font-size:11px;padding:5px 12px;color:#c53030;border-color:#c53030" onclick="removerLancamento('${l.id}')">🗑 Remover</button>`:''}
+        <div id="botoes-${l.id}" style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">${botoesHtml}</div>
+        <div id="painel-fechar-${l.id}" style="display:none;margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border,#e2e8f0)">
+          <p style="font-size:12px;color:var(--text-secondary,#666);margin:0 0 10px">Selecione o tipo da transação:</p>
+          <select id="tipo-${l.id}" onchange="toggleOutroDesc('${l.id}')" style="width:100%;font-size:13px;padding:8px 10px;border-radius:6px;border:0.5px solid var(--border-strong,#ccc);margin-bottom:10px">
+            <option value="locacao">📋 Locação</option>
+            <option value="aditivo">📄 Aditivo</option>
+            <option value="venda">🏠 Venda</option>
+            <option value="notificacao">📬 Notificação</option>
+            <option value="outro">📝 Outro</option>
+          </select>
+          <div id="outro-desc-${l.id}" style="display:none;margin-bottom:10px">
+            <input type="text" id="outro-txt-${l.id}" placeholder="Descreva o tipo..." style="width:100%;font-size:13px;padding:8px 10px;border-radius:6px;border:0.5px solid var(--border-strong,#ccc);box-sizing:border-box">
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="ocultarPainelFechar('${l.id}')">Cancelar</button>
+            <button class="btn btn-primary" style="font-size:11px;padding:5px 14px" onclick="confirmarFecharNegociacao('${l.id}')">🔒 Confirmar</button>
+          </div>
         </div>`;
       listaEl.appendChild(card);
     });
