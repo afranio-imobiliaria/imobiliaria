@@ -34978,10 +34978,23 @@ function montarContrato(d){
   // CLÁUSULA PRIMEIRA
   h+='<p><strong>CLÁUSULA PRIMEIRA — DAS PARTES CONTRATANTES</strong></p>';
   h+='<p><strong>LOCADOR(ES)</strong></p>';
-  if(d.locPJ && txtLocadoresPJ){
-    h+='<p>'+txtLocadoresPJ+(d.pjEnd?', com sede na '+d.pjEnd:''+(d.pjRepEnd?', representante residente em '+d.pjRepEnd:''))+'.</p>';
+  if(d.locPJ && d.pjRazao){
+    // Locadores — só nomes
+    var nomesLocadores=locadores.map(l=>l.nome).filter(Boolean).join(' e ');
+    h+='<p>'+nomesLocadores+'.</p>';
+    // Empresa representante — completo
+    var pjTexto='Os Locadores são representados pela empresa <strong>'+d.pjRazao+'</strong>, CNPJ n.º <strong>'+d.pjCNPJ+'</strong>';
+    if(d.pjEnd) pjTexto+=', com sede na '+d.pjEnd;
+    pjTexto+=', neste ato representada por <strong>'+(d.pjRepNome||'___')+'</strong>';
+    if(d.pjRepNac) pjTexto+=', '+d.pjRepNac;
+    if(d.pjRepProf) pjTexto+=', '+d.pjRepProf;
+    if(d.pjRepEC) pjTexto+=', '+d.pjRepEC;
+    if(d.pjRepCPF) pjTexto+=', CPF n.º '+d.pjRepCPF;
+    if(d.pjRepRG) pjTexto+=', RG n.º '+d.pjRepRG;
+    if(d.pjRepEnd) pjTexto+=', residente e domiciliado em '+d.pjRepEnd;
+    h+='<p>'+pjTexto+'.</p>';
   } else {
-    h+='<p>'+txtLocadores+(locadores.length>0&&locadores[0].end?', residente e domiciliado em '+locadores[0].end:'')+'.</p>';
+    h+='<p>'+txtLocadores+'.</p>';
   }
   h+='<p><strong>'+loc_t.toUpperCase()+'</strong></p>';
   h+='<p>'+txtLct1+'.</p>';
@@ -35244,7 +35257,25 @@ async function gerarDocx(d){
   ps.push(par('PELO PRESENTE INSTRUMENTO PARTICULAR DE LOCAÇÃO DE IMÓVEL, de acordo com a legislação vigente — Lei n.º 8.245/1991, Lei n.º 10.406/2002 (Código Civil), Lei n.º 13.709/2018 (LGPD) e o Código de Processo Civil —, os Locadores e '+art+' '+loc_t+' celebram este contrato sob as cláusulas e condições seguintes:'));
   ps.push(tit('CLÁUSULA PRIMEIRA — DAS PARTES CONTRATANTES'));
   ps.push(par('LOCADOR(ES)',false,true));
-  ps.push(par(locadores.map(l=>{const semRG=l.nome&&l.nome.includes('Gabriel');return l.nome+', '+l.qual+', CPF n.º '+l.cpf+(semRG?'':(l.rg&&l.rg!=='_______________'?', RG n.º '+l.rg:''));}).join(', e ')+', com endereço na Rua São Luís, número 25, Lojas 1 e 2, Bairro Jóquei de Itaparica, Vila Velha/ES, CEP 29.103-890.'));
+  if(d.locPJ && d.pjRazao){
+    // Locadores — só nomes
+    var nomesLocadoresW = locadores.map(l=>l.nome).filter(Boolean).join(' e ');
+    ps.push(par(nomesLocadoresW+'.'));
+    // Empresa representante — completo
+    var pjTxtW='Os Locadores são representados pela empresa '+d.pjRazao+', CNPJ n.º '+d.pjCNPJ;
+    if(d.pjEnd) pjTxtW+=', com sede na '+d.pjEnd;
+    pjTxtW+=', neste ato representada por '+(d.pjRepNome||'___');
+    if(d.pjRepNac) pjTxtW+=', '+d.pjRepNac;
+    if(d.pjRepProf) pjTxtW+=', '+d.pjRepProf;
+    if(d.pjRepEC) pjTxtW+=', '+d.pjRepEC;
+    if(d.pjRepCPF) pjTxtW+=', CPF n.º '+d.pjRepCPF;
+    if(d.pjRepRG) pjTxtW+=', RG n.º '+d.pjRepRG;
+    if(d.pjRepEnd) pjTxtW+=', residente e domiciliado em '+d.pjRepEnd;
+    ps.push(par(pjTxtW+'.'));
+  } else {
+    var txtLocadoresWord = locadores.map(l=>{return l.nome+(l.qual?', '+l.qual:'')+(l.cpf?', CPF n.º '+l.cpf:'')+(l.rg&&l.rg!=='_______________'?', RG n.º '+l.rg:'');}).join(', e ');
+    ps.push(par(txtLocadoresWord+'.'));
+  }
   ps.push(par(loc_t.toUpperCase(),false,true));
   ps.push(par(txtLct1+'.'));
   if(lct2&&lct2.nome){
@@ -35258,9 +35289,13 @@ async function gerarDocx(d){
 
   // CLÁUSULA TERCEIRA
   ps.push(tit('CLÁUSULA TERCEIRA — DO PRAZO, DO ALUGUEL, DOS ENCARGOS, DOS PAGAMENTOS, DA RENOVAÇÃO, DAS MULTAS E DA GARANTIA'));
-  ps.push(par('1. Do Prazo — O contrato terá duração de 12 (doze) meses, com início em '+fmtDt(d.dataIni)+' e término em '+fmtDt(d.dataFim)+'.'));
-  ps.push(par('2. Do Valor do Aluguel — '+fmtM(d.aluguel)+', na modalidade "mora-se para pagar".'));
-  ps.push(par('3. Do Condomínio — '+(d.cond?'R$ '+(d.condVal||'___')+' mensais, devendo ser pago até o vencimento.':'Não há condomínio.')));
+  ps.push(par('1. Do Prazo da Locação — O contrato terá duração de 12 (doze) meses, com início em '+fmtDt(d.dataIni)+' e término em '+fmtDt(d.dataFim)+'. Fica expressamente vedada qualquer alegação de prazo de 6 (seis) meses. Caso haja interesse de ambas as partes, o contrato poderá ser renovado até completar 36 (trinta e seis) meses, nos termos do art. 46 da Lei n.º 8.245/1991.'));
+  ps.push(par('2. Do Valor do Aluguel — O aluguel mensal é de '+fmtM(d.aluguel)+', na modalidade "mora-se para pagar", nos termos do art. 17 da Lei n.º 8.245/1991. O valor do aluguel é fixo durante a vigência do contrato, salvo reajuste previsto na renovação.'));
+  if(d.cond&&d.condVal){
+    ps.push(par('3. Do Condomínio — O valor mensal do condomínio é de '+fmtM(d.condVal)+', podendo sofrer variações em função das despesas do edifício, deliberadas em assembleia condominial, nos termos do art. 1.348 do Código Civil. '+Art+' '+loc_t+' deverá efetuar o pagamento até a data de seu vencimento, sob pena de multa e rescisão contratual, nos termos do art. 23, I da Lei n.º 8.245/1991.'));
+  } else {
+    ps.push(par('3. Do Condomínio — O imóvel não possui taxa condominial.'));
+  }
   ps.push(par('4. Do IPTU e Taxa de Lixo — Permanecerão em nome do Locador, devendo ser pagos '+pelo_a+' '+loc_t+' antes do vencimento, sob pena de rescisão, nos termos do art. 23, VIII da Lei n.\u00ba 8.245/1991.'));
   // Água
   var aguaTipoD=d.aguaTipo||'individual';
