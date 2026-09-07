@@ -34385,14 +34385,70 @@ while (n === a[++i] && n === a[++i] && n === a[++i] && n === a[++i] && n === a[+
   <div class="painel-header">
     <div>
       <h2>📊 Fechamento do Mês</h2>
-      <p id="fech-mes-label">Selecione o mês para fechar</p>
+      <p id="fech-mes-label">Selecione o mês</p>
     </div>
-    <div style="display:flex;gap:8px;align-items:center">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <select id="fech-mes-sel" onchange="carregarFechamento()" style="padding:6px 10px;border-radius:6px;border:1px solid #fff3;background:rgba(255,255,255,.15);color:#fff;font-size:12px"></select>
+      <button class="btn btn-outline" style="color:#fff;border-color:#fff3;font-size:12px" onclick="abrirModalLancamento()">➕ Novo Lançamento</button>
     </div>
+  </div>
+  <div class="secao" id="fech-lancamentos-lista">
+    <div class="secao-titulo">💳 LANÇAMENTOS DO MÊS</div>
+    <p style="color:#888;font-size:13px;text-align:center;padding:12px" id="fech-lanc-vazio">Nenhum lançamento ainda.</p>
   </div>
   <div class="secao" id="fech-conteudo">
     <p style="color:#888;font-size:13px">Selecione um mês para ver o fechamento.</p>
+  </div>
+</div>
+
+<!-- MODAL NOVO LANÇAMENTO -->
+<div id="modal-lancamento" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;overflow-y:auto">
+  <div style="background:#fff;border-radius:12px;max-width:560px;margin:40px auto;padding:28px;position:relative">
+    <button onclick="fecharModalLancamento()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#888">✕</button>
+    <h3 style="color:#1a3a5c;margin-bottom:20px;font-size:16px">💳 Novo Lançamento</h3>
+    <div class="grid g2" style="margin-bottom:12px">
+      <div class="campo"><label>Nome do Locador</label><input id="lanc-locador" type="text" placeholder="Nome do locador"></div>
+      <div class="campo"><label>Nome do Locatário</label><input id="lanc-locatario" type="text" placeholder="Nome do locatário"></div>
+    </div>
+    <div class="grid g2" style="margin-bottom:12px">
+      <div class="campo"><label>Valor (R$)</label><input id="lanc-val" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="campo"><label>Data do pagamento</label><input id="lanc-data" type="date"></div>
+    </div>
+    <div class="grid g2" style="margin-bottom:12px">
+      <div class="campo"><label>Quem pagou</label><input id="lanc-quem" type="text" placeholder="Nome de quem pagou"></div>
+      <div class="campo"><label>Para quem</label><input id="lanc-para" type="text" placeholder="Nome do recebedor"></div>
+    </div>
+    <div class="campo" style="margin-bottom:12px"><label>Observação (opcional)</label><input id="lanc-obs" type="text" placeholder="Ex: parte do aluguel de outubro..."></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-outline" onclick="fecharModalLancamento()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarLancamento()">💾 Salvar Lançamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FECHAR NEGOCIAÇÃO -->
+<div id="modal-fechar-neg" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;overflow-y:auto">
+  <div style="background:#fff;border-radius:12px;max-width:500px;margin:40px auto;padding:28px;position:relative">
+    <button onclick="g('modal-fechar-neg').style.display='none'" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#888">✕</button>
+    <h3 style="color:#1a3a5c;margin-bottom:20px;font-size:16px">🔒 Fechar Negociação</h3>
+    <input type="hidden" id="fneg-card-id">
+    <div class="campo" style="margin-bottom:12px"><label>Tipo da transação</label>
+      <select id="fneg-tipo" style="border:1px solid #d1d9e0;border-radius:6px;padding:8px 10px;font-size:13px;width:100%">
+        <option value="locacao">📋 Locação</option>
+        <option value="aditivo">📄 Aditivo</option>
+        <option value="venda">🏠 Venda</option>
+        <option value="notificacao">📬 Notificação</option>
+        <option value="outro">📝 Outro</option>
+      </select>
+    </div>
+    <div class="campo" id="fneg-outro-campo" style="display:none;margin-bottom:12px"><label>Descrição (campo livre)</label><input id="fneg-outro-desc" type="text" placeholder="Descreva o tipo de transação"></div>
+    <div style="background:#f8fafc;border-radius:8px;padding:12px;margin-bottom:16px">
+      <p style="font-size:12px;color:#666;margin-bottom:4px">Ao fechar, esta negociação será contabilizada no <strong>Fechamento do Mês</strong> conforme o tipo selecionado.</p>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="g('modal-fechar-neg').style.display='none'">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarFecharNegociacao()">🔒 Confirmar Fechamento</button>
+    </div>
   </div>
 </div>
 
@@ -36036,39 +36092,183 @@ function deletarDespesa(id, mes){
 // ══════════════════════════════════════════════
 function getMesFechamento(){ return g('fech-mes-sel')?.value||mesAtual(); }
 
+// ── LANÇAMENTOS FINANCEIROS ──────────────────────────────────
+var _lancEditId = null;
+
+function abrirModalLancamento(id){
+  _lancEditId = id||null;
+  const mes = getMesFechamento();
+  if(id){
+    const lancs = DB.get('lanc_'+mes)||[];
+    const l = lancs.find(x=>x.id===id);
+    if(l){
+      g('lanc-locador').value=l.locador||'';
+      g('lanc-locatario').value=l.locatario||'';
+      g('lanc-val').value=l.val||'';
+      g('lanc-data').value=l.data||'';
+      g('lanc-quem').value=l.quem||'';
+      g('lanc-para').value=l.para||'';
+      g('lanc-obs').value=l.obs||'';
+    }
+  } else {
+    ['lanc-locador','lanc-locatario','lanc-val','lanc-quem','lanc-para','lanc-obs'].forEach(id=>{ if(g(id))g(id).value=''; });
+    if(g('lanc-data')) g('lanc-data').value = new Date().toISOString().split('T')[0];
+  }
+  g('modal-lancamento').style.display='';
+}
+
+function fecharModalLancamento(){
+  g('modal-lancamento').style.display='none';
+  _lancEditId = null;
+}
+
+function salvarLancamento(){
+  const mes = getMesFechamento();
+  const val = parseFloat(g('lanc-val')?.value||0);
+  if(!val){ alert('Informe o valor.'); return; }
+  const lancs = DB.get('lanc_'+mes)||[];
+  if(_lancEditId){
+    const idx = lancs.findIndex(x=>x.id===_lancEditId);
+    if(idx>=0) lancs[idx] = {...lancs[idx], locador:g('lanc-locador').value, locatario:g('lanc-locatario').value, val:g('lanc-val').value, data:g('lanc-data').value, quem:g('lanc-quem').value, para:g('lanc-para').value, obs:g('lanc-obs').value};
+  } else {
+    lancs.push({id:'lanc_'+Date.now(), locador:g('lanc-locador').value, locatario:g('lanc-locatario').value, val:g('lanc-val').value, data:g('lanc-data').value, quem:g('lanc-quem').value, para:g('lanc-para').value, obs:g('lanc-obs').value, tipo:null, concluido:false, dtConclusao:''});
+  }
+  DB.set('lanc_'+mes, lancs);
+  fecharModalLancamento();
+  carregarFechamento();
+}
+
+function removerLancamento(id){
+  if(!confirm('Remover este lançamento?')) return;
+  const mes = getMesFechamento();
+  const lancs = (DB.get('lanc_'+mes)||[]).filter(x=>x.id!==id);
+  DB.set('lanc_'+mes, lancs);
+  carregarFechamento();
+}
+
+function abrirFecharNegociacao(id){
+  _lancEditId = id;
+  g('fneg-card-id').value = id;
+  g('fneg-tipo').value = 'locacao';
+  g('fneg-outro-campo').style.display='none';
+  g('fneg-outro-desc').value='';
+  g('modal-fechar-neg').style.display='';
+}
+
+function confirmarFecharNegociacao(){
+  const mes = getMesFechamento();
+  const id = g('fneg-card-id').value;
+  const tipo = g('fneg-tipo').value;
+  const outroDesc = g('fneg-outro-desc').value;
+  const lancs = DB.get('lanc_'+mes)||[];
+  const idx = lancs.findIndex(x=>x.id===id);
+  if(idx>=0){
+    lancs[idx].concluido = true;
+    lancs[idx].tipo = tipo;
+    lancs[idx].tipoDesc = tipo==='outro'?outroDesc:({locacao:'Locação',aditivo:'Aditivo',venda:'Venda',notificacao:'Notificação'}[tipo]||tipo);
+    lancs[idx].dtConclusao = new Date().toISOString().split('T')[0];
+  }
+  DB.set('lanc_'+mes, lancs);
+  g('modal-fechar-neg').style.display='none';
+  carregarFechamento();
+}
+
+// Registrar retirada de sócio
+function salvarRetirada(){
+  const mes = getMesFechamento();
+  const retiradas = DB.get('retiradas_'+mes)||{afranio:0,paulo:0,rafaela:0};
+  retiradas.afranio = parseFloat(g('ret-afranio')?.value||0);
+  retiradas.paulo = parseFloat(g('ret-paulo')?.value||0);
+  retiradas.rafaela = parseFloat(g('ret-rafaela')?.value||0);
+  DB.set('retiradas_'+mes, retiradas);
+  carregarFechamento();
+}
+
+// Controla campo livre no modal fechar negociação
+document.addEventListener('change', function(e){
+  if(e.target && e.target.id==='fneg-tipo'){
+    g('fneg-outro-campo').style.display = e.target.value==='outro'?'':'none';
+  }
+});
+
 function carregarFechamento(){
   const mes = getMesFechamento();
-  g('fech-mes-label').textContent = fmtMes(mes);
+  if(g('fech-mes-label')) g('fech-mes-label').textContent = fmtMes(mes);
   const fechamento = DB.get('fechamento_'+mes)||{fechado:false};
   const clientes = getClientes(mes);
   const despesas = getDespesas(mes);
+  const lancs = DB.get('lanc_'+mes)||[];
+  const retiradas = DB.get('retiradas_'+mes)||{afranio:0,paulo:0,rafaela:0};
 
-  // Entradas — carteira de clientes
-  const taxasRecebidas = clientes.filter(c=>c.statusMes.pago).reduce((s,c)=>s+parseFloat(c.taxaVal||0),0);
-  const taxasPendentes = clientes.filter(c=>!c.statusMes.pago).reduce((s,c)=>s+parseFloat(c.taxaVal||0),0);
+  // ── LANÇAMENTOS ──────────────────────────────────────
+  const listaEl = g('fech-lancamentos-lista');
+  const vazioEl = g('fech-lanc-vazio');
+  if(listaEl){
+    // Limpar cards anteriores
+    Array.from(listaEl.querySelectorAll('.lanc-card')).forEach(el=>el.remove());
+    if(vazioEl) vazioEl.style.display = lancs.length?'none':'';
+    lancs.sort((a,b)=>(a.data||'').localeCompare(b.data||'')).forEach(l=>{
+      const card = document.createElement('div');
+      card.className = 'lanc-card';
+      card.style.cssText = 'background:'+(l.concluido?'#f0fff4':'#fff')+';border:1px solid '+(l.concluido?'#9ae6b4':'#e2e8f0')+';border-radius:8px;padding:14px;margin-bottom:10px;position:relative';
+      const tipoLabel = l.concluido?`<span style="background:#276749;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700">${l.tipoDesc||l.tipo}</span>`:'<span style="background:#f6ad55;color:#7b341e;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700">Em aberto</span>';
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-weight:700;font-size:14px;color:#1a3a5c">${l.locador||'—'} → ${l.locatario||'—'}</div>
+            <div style="font-size:12px;color:#666;margin-top:2px">${l.data?fmtData(l.data):''} ${l.quem?'· Pago por: '+l.quem:''} ${l.para?'· Para: '+l.para:''}</div>
+            ${l.obs?`<div style="font-size:11px;color:#888;margin-top:2px">${l.obs}</div>`:''}
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:18px;font-weight:700;color:#1a3a5c">${fmtVal(l.val)}</div>
+            <div style="margin-top:4px">${tipoLabel}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+          ${!l.concluido?`<button class="btn btn-primary" style="font-size:11px;padding:5px 12px" onclick="abrirFecharNegociacao('${l.id}')">🔒 Fechar Negociação</button>`:''}
+          <button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="abrirModalLancamento('${l.id}')">✏️ Editar</button>
+          ${!l.concluido?`<button class="btn btn-outline" style="font-size:11px;padding:5px 12px;color:#c53030;border-color:#c53030" onclick="removerLancamento('${l.id}')">🗑 Remover</button>`:''}
+        </div>`;
+      listaEl.appendChild(card);
+    });
+  }
 
-  // Lançamentos de contratos do mês (futuro — por ora placeholder)
-  const lancamentos = DB.get('lancamentos_'+mes)||{locacoes:[], aditamentos:[], vendas:[]};
-  const totalLocacoes = lancamentos.locacoes.reduce((s,l)=>s+parseFloat(l.val||0),0);
-  const totalAditamentos = lancamentos.aditamentos.reduce((s,l)=>s+parseFloat(l.val||0),0);
-  const totalVendas = lancamentos.vendas.reduce((s,l)=>s+parseFloat(l.val||0),0);
+  // ── RELATÓRIO ────────────────────────────────────────
+  const taxasRecebidas = clientes.filter(c=>c.statusMes&&c.statusMes.pago).reduce((s,c)=>s+parseFloat(c.taxaVal||0),0);
+  const taxasPendentes = clientes.filter(c=>!c.statusMes||!c.statusMes.pago).reduce((s,c)=>s+parseFloat(c.taxaVal||0),0);
 
-  // Totais
-  const totalEntradas = taxasRecebidas + totalLocacoes + totalAditamentos + totalVendas;
+  // Lançamentos concluídos por tipo
+  const concluidos = lancs.filter(l=>l.concluido);
+  const porTipo = {};
+  concluidos.forEach(l=>{
+    const t = l.tipo||'outro';
+    if(!porTipo[t]) porTipo[t]={count:0,total:0,label:l.tipoDesc||t};
+    porTipo[t].count++;
+    porTipo[t].total += parseFloat(l.val||0);
+  });
+  const totalLanc = concluidos.reduce((s,l)=>s+parseFloat(l.val||0),0);
+  const totalEntradas = taxasRecebidas + totalLanc;
   const totalDespesas = despesas.filter(d=>d.pago).reduce((s,d)=>s+parseFloat(d.val||0),0);
+  const totalRetiradas = parseFloat(retiradas.afranio||0)+parseFloat(retiradas.paulo||0)+parseFloat(retiradas.rafaela||0);
   const lucro = totalEntradas - totalDespesas;
+  const lucroLiquido = lucro - totalRetiradas;
   const af = lucro * 0.6;
   const paulo = lucro * 0.2;
   const rafa = lucro * 0.2;
+  const afLiq = af - parseFloat(retiradas.afranio||0);
+  const pauloLiq = paulo - parseFloat(retiradas.paulo||0);
+  const rafaLiq = rafa - parseFloat(retiradas.rafaela||0);
 
-  const mesesNomes = MESES_NOMES;
+  const tipoEmoji = {locacao:'📋',aditivo:'📄',venda:'🏠',notificacao:'📬',outro:'📝'};
+  const tipoNomes = {locacao:'Locações',aditivo:'Aditivos',venda:'Vendas',notificacao:'Notificações',outro:'Outros'};
+
   const [y,mo] = mes.split('-');
-  const mesNome = `${MESES_NOMES[parseInt(mo)-1]} de ${y}`;
+  const mesNome = MESES_NOMES[parseInt(mo)-1]+' de '+y;
 
   const html = `
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
     <h3 style="font-size:15px;color:#1a3a5c">Fechamento — ${mesNome}</h3>
-    <div style="display:flex;gap:8px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
       ${!fechamento.fechado
         ? `<button class="btn btn-primary" onclick="fecharMes('${mes}')">🔒 Fechar Mês</button>`
         : `<span style="background:#c6f6d5;color:#276749;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700">✅ Mês Fechado</span>
@@ -36079,45 +36279,56 @@ function carregarFechamento(){
   </div>
 
   <div class="fech-bloco">
-    <div class="fech-titulo">📥 Entradas</div>
-    <div class="fech-linha"><span>Taxas de administração recebidas (${clientes.filter(c=>c.statusMes.pago).length} imóveis)</span><span>${fmtVal(taxasRecebidas)}</span></div>
-    <div class="fech-linha" style="color:#888"><span>Taxas pendentes (${clientes.filter(c=>!c.statusMes.pago).length} imóveis — não contabilizadas)</span><span>${fmtVal(taxasPendentes)}</span></div>
-    <div class="fech-linha"><span>Contratos de locação (${lancamentos.locacoes.length})</span><span>${fmtVal(totalLocacoes)}</span></div>
-    <div class="fech-linha"><span>Aditamentos (${lancamentos.aditamentos.length})</span><span>${fmtVal(totalAditamentos)}</span></div>
-    <div class="fech-linha"><span>Vendas (${lancamentos.vendas.length})</span><span>${fmtVal(totalVendas)}</span></div>
-    <div class="fech-total"><span>Total de Entradas</span><span>${fmtVal(totalEntradas)}</span></div>
+    <div class="fech-titulo">📥 Receitas</div>
+    <div class="fech-linha"><span>Taxas de administração recebidas (${clientes.filter(c=>c.statusMes&&c.statusMes.pago).length} imóveis)</span><span>${fmtVal(taxasRecebidas)}</span></div>
+    <div class="fech-linha" style="color:#aaa"><span>Taxas pendentes (não contabilizadas)</span><span>${fmtVal(taxasPendentes)}</span></div>
+    ${Object.entries(porTipo).map(([t,v])=>`<div class="fech-linha"><span>${tipoEmoji[t]||'📝'} ${tipoNomes[t]||v.label} (${v.count})</span><span>${fmtVal(v.total)}</span></div>`).join('')}
+    ${concluidos.length===0?'<div class="fech-linha" style="color:#aaa"><span>Nenhum lançamento concluído ainda</span><span>R$ 0,00</span></div>':''}
+    <div class="fech-total"><span>Total de Receitas</span><span>${fmtVal(totalEntradas)}</span></div>
   </div>
 
   <div class="fech-bloco">
-    <div class="fech-titulo">📤 Saídas (Despesas Pagas)</div>
+    <div class="fech-titulo">📤 Despesas Pagas</div>
     ${despesas.filter(d=>d.pago).length
       ? despesas.filter(d=>d.pago).map(d=>`<div class="fech-linha"><span>${d.desc} (${d.cat})</span><span>${fmtVal(d.val)}</span></div>`).join('')
-      : '<div class="fech-linha" style="color:#888"><span>Nenhuma despesa paga neste mês</span><span>—</span></div>'
+      : '<div class="fech-linha" style="color:#aaa"><span>Nenhuma despesa paga</span><span>—</span></div>'
     }
-    <div class="fech-total"><span>Total de Saídas</span><span>${fmtVal(totalDespesas)}</span></div>
+    <div class="fech-total"><span>Total de Despesas</span><span>${fmtVal(totalDespesas)}</span></div>
   </div>
 
   <div class="fech-bloco" style="background:${lucro>=0?'#f0fff4':'#fff5f5'};border-color:${lucro>=0?'#9ae6b4':'#fc8181'}">
-    <div class="fech-titulo">💰 Lucro Líquido</div>
+    <div class="fech-titulo">💰 Resultado Bruto</div>
     <div class="fech-total" style="font-size:18px;color:${lucro>=0?'#276749':'#c53030'}">
-      <span>Resultado do Mês</span><span>${fmtVal(lucro)}</span>
+      <span>Receitas − Despesas</span><span>${fmtVal(lucro)}</span>
     </div>
   </div>
 
   <div class="fech-bloco">
-    <div class="fech-titulo">📊 Distribuição dos Lucros</div>
-    <div class="fech-socio socio-af"><span>Afrânio Geraldo de Melo — 60%</span><span><strong>${fmtVal(af)}</strong></span></div>
-    <div class="fech-socio socio-paulo"><span>Paulo Melo Cresci — 20%</span><span><strong>${fmtVal(paulo)}</strong></span></div>
-    <div class="fech-socio socio-rafa"><span>Rafaela Cresci — 20%</span><span><strong>${fmtVal(rafa)}</strong></span></div>
+    <div class="fech-titulo">💸 Retiradas dos Sócios (antes do fechamento)</div>
+    <div class="grid g3" style="margin-bottom:12px">
+      <div class="campo"><label>Afrânio (R$)</label><input type="number" step="0.01" id="ret-afranio" value="${retiradas.afranio||''}" placeholder="0,00" onchange="salvarRetirada()"></div>
+      <div class="campo"><label>Paulo (R$)</label><input type="number" step="0.01" id="ret-paulo" value="${retiradas.paulo||''}" placeholder="0,00" onchange="salvarRetirada()"></div>
+      <div class="campo"><label>Rafaela (R$)</label><input type="number" step="0.01" id="ret-rafaela" value="${retiradas.rafaela||''}" placeholder="0,00" onchange="salvarRetirada()"></div>
+    </div>
+    <div class="fech-linha"><span>Total retirado</span><span>${fmtVal(totalRetiradas)}</span></div>
   </div>
 
-  ${lancamentos.locacoes.length||lancamentos.aditamentos.length||lancamentos.vendas.length?`
   <div class="fech-bloco">
-    <div class="fech-titulo">📋 Documentos do Mês</div>
-    ${lancamentos.locacoes.map(l=>`<div class="fech-linha"><span>📋 Locação — ${l.locatario||'—'} · ${l.imovel||'—'}</span><span>${fmtVal(l.val)}</span></div>`).join('')}
-    ${lancamentos.aditamentos.map(l=>`<div class="fech-linha"><span>📄 Aditamento — ${l.locatario||'—'} · ${l.imovel||'—'}</span><span>${fmtVal(l.val)}</span></div>`).join('')}
-    ${lancamentos.vendas.map(l=>`<div class="fech-linha"><span>🏠 Venda — ${l.comprador||'—'} · ${l.imovel||'—'}</span><span>${fmtVal(l.val)}</span></div>`).join('')}
-  </div>`:''}`;
+    <div class="fech-titulo">📊 Distribuição por Sócio</div>
+    <div class="fech-socio socio-af">
+      <span>Afrânio Geraldo de Melo — 60%</span>
+      <span><strong>${fmtVal(af)}</strong> <small style="color:#888;font-weight:400">(retirou ${fmtVal(retiradas.afranio||0)} · saldo ${fmtVal(afLiq)})</small></span>
+    </div>
+    <div class="fech-socio socio-paulo">
+      <span>Paulo — 20%</span>
+      <span><strong>${fmtVal(paulo)}</strong> <small style="color:#888;font-weight:400">(retirou ${fmtVal(retiradas.paulo||0)} · saldo ${fmtVal(pauloLiq)})</small></span>
+    </div>
+    <div class="fech-socio socio-rafa">
+      <span>Rafaela — 20%</span>
+      <span><strong>${fmtVal(rafa)}</strong> <small style="color:#888;font-weight:400">(retirou ${fmtVal(retiradas.rafaela||0)} · saldo ${fmtVal(rafaLiq)})</small></span>
+    </div>
+    <div class="fech-total"><span>Saldo a distribuir</span><span>${fmtVal(lucroLiquido)}</span></div>
+  </div>`;
 
   g('fech-conteudo').innerHTML = html;
 }
